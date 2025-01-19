@@ -1,7 +1,7 @@
 name: cool_background_animation
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
+homepage: git@github.com:AIdevol/cool_background_animation.git
 
 environment:
   sdk: ^3.6.0
