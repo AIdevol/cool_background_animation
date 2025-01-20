@@ -1,5 +1,5 @@
 import 'dart:math' as Math;
-import 'package:example/custom_model/rainbow_config.dart';
+import 'package:cool_background_animation/src/custom_model/rainbow_config.dart';
 import 'package:flutter/material.dart';
 
 class RainbowBackground extends StatefulWidget {

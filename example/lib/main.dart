@@ -30,18 +30,12 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RainbowBackground(config: RainbowConfig(
-        colors: [Colors.red],
-
+        body: RainbowBackground(
+      config: const RainbowConfig(
+        position: RainbowPosition.top,
+        orientation: RainbowOrientation.down,
+        positionOffset: 0.15,
       ),
-      )/*const StarFallingBackground(
-        numberOfStars: 100,
-        starColor: Colors.green,
-        minStarSize: 2.0,
-        maxStarSize: 5.0,
-        animationDuration: Duration(seconds: 10),
-        backgroundColor: Colors.black,
-      ),*/
-    );
+    ));
   }
 }
