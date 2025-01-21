@@ -32,7 +32,7 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
         body: RainbowBackground(
       config: const RainbowConfig(
-        position: RainbowPosition.top,
+        position: RainbowPosition.bottom,
         orientation: RainbowOrientation.down,
         positionOffset: 0.15,
       ),
