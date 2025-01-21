@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.0"
+  cool_background_animation:
+    dependency: "direct main"
+    description:
+      name: cool_background_animation
+      sha256: c143c76533bf0aa0b8f1b6384b639e4103d9553b34619b697454e06248f59c8c
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   cupertino_icons:
     dependency: "direct main"
     description:

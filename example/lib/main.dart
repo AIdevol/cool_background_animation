@@ -1,7 +1,4 @@
-import 'package:example/custom_model/rainbow_config.dart';
-import 'package:example/rain_bow/rainbow_background.dart';
 import 'package:flutter/material.dart';
-import 'falling_star_background/fallingStar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,12 +27,6 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: RainbowBackground(
-      config: const RainbowConfig(
-        position: RainbowPosition.bottom,
-        orientation: RainbowOrientation.down,
-        positionOffset: 0.15,
-      ),
-    ));
+        body: Container());
   }
 }
