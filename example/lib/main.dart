@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'bubble_animation.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -27,6 +29,31 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container());
+        body:
+        BubbleBackground(
+        numberOfBubbles: 30,
+        bubbleColors: [Colors.purple, Colors.pink, Colors.deepPurple],
+        config: BubbleConfig(
+        minRadius: 15,
+        maxRadius: 50,
+        minSpeed: 0.5,
+        maxSpeed: 2.5,
+        minOpacity: 0.3,
+        maxOpacity: 0.7,
+        enableGradient: true,
+        gradientColors: [Colors.blue, Colors.lightBlue],
+        enablePulsing: true,
+        pulsingDuration: Duration(seconds: 3),
+    enableWobble: true,
+    wobbleIntensity: 3.0,
+    ),
+    backgroundDecoration: BoxDecoration(
+    gradient: LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Colors.black, Colors.blue.shade900],
+    ),
+    ),
+    ));
   }
 }
