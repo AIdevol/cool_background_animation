@@ -31,8 +31,9 @@ flutter pub get
 Below are previews showcasing the potential of **Cool Background Animation** in action:
 
 #### 1️⃣ **Light Theme Animation**
-![Light Theme Animation]([https://example.com/path-to-light-theme-demo.gif](https://github.com/AIdevol/cool_background_animation/blob/main/example/assets/animations/starfalling.gif))
-
+<div align="center">
+  <img src="https://github.com/AIdevol/cool_background_animation/blob/main/example/assets/animations/starfalling.gif" alt="StarFallingBackground " width="300"/>
+</div>
 #### 2️⃣ **Dark Theme Animation**
 ![Dark Theme Animation](https://example.com/path-to-dark-theme-demo.gif)
 
