@@ -63,7 +63,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CoolBackgroundAnimation(
+      body: StarFallingBackground(
         speed: 2.0,
         colors: [Colors.blue, Colors.purple],
         patterns: Patterns.starfall,
