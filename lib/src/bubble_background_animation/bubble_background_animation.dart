@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../custom_model/bubble_model.dart';
+import '../../custom_model/bubble_model.dart';
 
 class BubbleBackground extends StatefulWidget {
   final int numberOfBubbles;

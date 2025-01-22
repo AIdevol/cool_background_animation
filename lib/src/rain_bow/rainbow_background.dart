@@ -1,6 +1,6 @@
 import 'dart:math' as Math;
-import 'package:cool_background_animation/src/custom_model/rainbow_config.dart';
 import 'package:flutter/material.dart';
+import '../../custom_model/rainbow_config.dart';
 
 class RainbowBackground extends StatefulWidget {
   const RainbowBackground({

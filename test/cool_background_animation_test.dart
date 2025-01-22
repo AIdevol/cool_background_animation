@@ -7,5 +7,6 @@ void main() {
    MatrixRainAnimation();
    BubbleBackground();
    RainbowBackground();
+   CelebrationAnimation();
   });
 }

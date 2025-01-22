@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../custom_model/star_model.dart';
+import '../../custom_model/star_model.dart';
 
 class StarFallingBackground extends StatefulWidget {
   final int numberOfStars;
