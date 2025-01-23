@@ -30,7 +30,7 @@ flutter pub get
 ### 🌟 Sample Animation
 Below are previews showcasing the potential of **Cool Background Animation** in action:
 
-#### 1️⃣ **Light Theme Animation**
+#### 1️⃣ **Starfalling Background Animation**
 <div align="center">
   <img src="https://github.com/AIdevol/cool_background_animation/blob/main/example/assets/animations/starfalling.gif" alt="StarFallingBackground " width="300"/>
 </div>
