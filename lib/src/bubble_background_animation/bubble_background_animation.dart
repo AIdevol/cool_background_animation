@@ -10,13 +10,13 @@ class BubbleBackground extends StatefulWidget {
   final BoxDecoration? backgroundDecoration;
 
   const BubbleBackground({
-    Key? key,
+    super.key,
     this.numberOfBubbles = 20,
     this.bubbleColors = const [Colors.blue],
     this.config = const BubbleConfig(),
     this.child,
     this.backgroundDecoration,
-  }) : super(key: key);
+  });
 
   @override
   State<BubbleBackground> createState() => _BubbleBackgroundState();

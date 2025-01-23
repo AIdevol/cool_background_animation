@@ -4,7 +4,7 @@ import '../../custom_model/rainbow_config.dart';
 
 class RainbowBackground extends StatefulWidget {
   const RainbowBackground({
-    super.key,
+    super.key,  // Corrected: Using super.key for the constructor parameter
     this.child,
     this.config = const RainbowConfig(),
   });
@@ -84,7 +84,7 @@ class RainbowPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final double maxRadius = size.width * config.heightRatio;
-    
+
     // Calculate rainbow position based on configuration
     final double rainbowY = config.position == RainbowPosition.bottom
         ? size.height * (1 - config.positionOffset)
@@ -102,23 +102,23 @@ class RainbowPainter extends CustomPainter {
 
     for (int i = 0; i < config.colors.length; i++) {
       final color = config.colors[i];
-      final nextColor = i < config.colors.length - 1 
-          ? config.colors[i + 1] 
+      final nextColor = i < config.colors.length - 1
+          ? config.colors[i + 1]
           : config.colors[0];
 
       final double radius = maxRadius - (i * (config.arcThickness + config.arcSpacing));
-      
+
       // Apply shimmer effect
-      final double opacity = config.enableShimmer 
+      final double opacity = config.enableShimmer
           ? (Math.sin(_normalizeIndex(i) * Math.pi + shimmerValue * Math.pi * 2) + 1) / 2
           : 1.0;
 
       if (config.useGradient) {
         paint.shader = SweepGradient(
           colors: [
-            color.withOpacity(opacity),
-            nextColor.withOpacity(opacity),
-            color.withOpacity(opacity),
+            color.withAlpha((opacity * 255).toInt()),  // Replaced withOpacity with withAlpha
+            nextColor.withAlpha((opacity * 255).toInt()),
+            color.withAlpha((opacity * 255).toInt()),
           ],
           stops: const [0.0, 0.5, 1.0],
           startAngle: startAngle,
@@ -131,7 +131,7 @@ class RainbowPainter extends CustomPainter {
           ),
         );
       } else {
-        paint.color = color.withOpacity(opacity);
+        paint.color = color.withAlpha((opacity * 255).toInt());  // Replaced withOpacity with withAlpha
         paint.shader = null;
       }
 
@@ -166,4 +166,3 @@ class RainbowPainter extends CustomPainter {
     return oldDelegate.shimmerValue != shimmerValue;
   }
 }
-

@@ -82,7 +82,6 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
 
   void initializeColumns() {
     final width = MediaQuery.of(context).size.width;
-    final columnWidth = widget.fontSize;
     final numberOfColumns = (width * widget.densityFactor / 100).floor();
 
     columns = List.generate(numberOfColumns, (index) {
