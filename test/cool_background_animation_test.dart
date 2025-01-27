@@ -8,5 +8,6 @@ void main() {
    BubbleBackground();
    RainbowBackground();
    CelebrationAnimation();
+   MultipleBalloons();
   });
 }

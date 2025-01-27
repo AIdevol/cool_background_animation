@@ -16,7 +16,7 @@ Add the package to your project by including it in your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  cool_background_animation: ^0.0.2
+  cool_background_animation: ^0.0.3
 ```
 
 Run the following command to fetch the package:
@@ -25,35 +25,6 @@ flutter pub get
 ```
 
 ---
-
-## 🎥 Demo
-### 🌟 Sample Animation
-Below are previews showcasing the potential of **Cool Background Animation** in action:
-
-#### 1️⃣ **Starfalling Background Animation**
-<div align="center">
-  <img src="https://github.com/AIdevol/cool_background_animation/blob/main/example/assets/animations/starfalling.gif" alt="StarFallingBackground " width="300"/>
-</div>
-#### 2️⃣ **Dark Theme Animation**
-![Dark Theme Animation](https://example.com/path-to-dark-theme-demo.gif)
-
-#### 📹 **Full Video Demo**
-Prefer to watch the animation in its full glory? Check it out here:  
-[Watch Full Demo](https://example.com/path-to-your-mov-file)
-
----
-
-## 🎛️ Customization Options
-The package offers several properties to tweak animations to your liking:
-
-| **Property**      | **Description**              | **Default Value**       |
-|-------------------|------------------------------|-------------------------|
-| `speed`           | Controls the animation speed | `1.0`                   |
-| `colors`          | Array of colors for animation| `[Colors.green]`        |
-| `patterns`        | Predefined animation patterns| `Patterns.default`      |
-
----
-
 ## 📚 Example Usage
 Here's how you can use **Cool Background Animation** in your Flutter app:
 
@@ -70,6 +41,67 @@ class MyHomePage extends StatelessWidget {
         patterns: Patterns.starfall,
       ),
     );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: RainbowBackground(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MatrixRainAnimation(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CelebrationAnimation(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: BubbleBackground(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MultipleBalloons(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body:  AnimatedBackgroundSymbols(
+        symbolColor: Colors.green,
+        symbolSize: 34.0,
+        customSymbols: '!@#\$%^&*()_+',
+        spawnInterval: Duration(milliseconds: 200),
+    initialSymbolCount: 20,
+    fontFamily: 'YourFontFamily',
+
+    ));
   }
 }
 ```

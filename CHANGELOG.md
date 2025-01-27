@@ -1,11 +1,11 @@
-## 0.0.2
+## 0.0.3
 
 * TODO: Describe initial release.
 
 Here’s an updated changelog tailored for your cool_background_animation package:
 
 Changelog
-0.0.2 - Initial Release
+0.0.3 - Initial Release
 Introduced cool_background_animation for creating visually appealing, customizable animated backgrounds.
 Added support for smooth and interactive animations, including falling stars and dynamic rainbow effects.
 Optimized for Flutter applications, providing seamless integration with any widget tree.
