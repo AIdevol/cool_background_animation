@@ -30,22 +30,20 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body:
-        CelebrationAnimation(
-          child: const Text('🎉'),
-          particleCount: 100,
-          colors: [Colors.blue, Colors.red, Colors.green, Colors.yellow],
-          particleType: ParticleType.star,
-          animationType: AnimationType.firework,
-          backgroundType: BackgroundType.animated,
-          backgroundGradientColors: [
-            Colors.purple.withOpacity(0.3),
-            Colors.blue.withOpacity(0.3),
-            Colors.pink.withOpacity(0.3),
-          ],
-          rotateParticles: true,
-          enableGlow: true,
-          enableTrails: true,
-          enablePhysics: true,
+        MultipleBalloons(
+          balloonCount: 30,
+          colors: [Colors.red, Colors.blue, Colors.green],
+          minSize: 30,
+          maxSize: 60,
+          minSpeed: 0.8,
+          maxSpeed: 1.5,
+          balloonShape: BalloonShape.round,
+          stringColor: Colors.black,
+          stringLength: 2.0,
+          opacity: 0.8,
+          swayingCurve: Curves.easeInOutBack,
+          enableRespawn: true,
+          // areaConstraints: BoxConstraints(maxWidth: 400, maxHeight: 600),
         ));
   }
 }
