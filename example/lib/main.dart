@@ -30,14 +30,19 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body:
-            AnimatedBackgroundSymbols(
-            symbolColor: Colors.green,
-            symbolSize: 34.0,
-            customSymbols: '!@#\$%^&*()_+',
-            spawnInterval: Duration(milliseconds: 200),
-            initialSymbolCount: 20,
-            fontFamily: 'YourFontFamily',
-
+        InfiniteSpiralMotionAnimation(
+          size: 300,
+          colors: [Colors.blue, Colors.purple, Colors.pink],
+          colorBlendMode: ColorBlendMode.rainbow,
+          enableParticles: true,
+          enable3DEffect: true,
+          enableShimmer: true,
+          enableGradientBorder: true,
+          enablePulsingBorder: true,
+          enableShadow: true,
+          rotationX: 0.2,
+          rotationY: 0.1,
+          direction: AnimationDirection.all,
         ));
   }
 }

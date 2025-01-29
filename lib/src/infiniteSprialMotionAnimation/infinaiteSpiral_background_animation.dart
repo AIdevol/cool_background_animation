@@ -1,25 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-enum AnimationDirection {
-  forward,
-  backward,
-  spiral,
-  wave,
-  pulse,
-  bounce,
-  zigzag,
-  random,
-  all
-}
+import '../../custom_model/enums/enum.dart';
 
-enum ColorBlendMode {
-  normal,
-  gradient,
-  rainbow,
-  pulse,
-  random
-}
 
 class InfiniteSpiralMotionAnimation extends StatefulWidget {
   final double size;

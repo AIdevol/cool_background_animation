@@ -8,3 +8,23 @@ enum BalloonShape {
   heart,
   star
 }
+
+enum AnimationDirection {
+  forward,
+  backward,
+  spiral,
+  wave,
+  pulse,
+  bounce,
+  zigzag,
+  random,
+  all
+}
+
+enum ColorBlendMode {
+  normal,
+  gradient,
+  rainbow,
+  pulse,
+  random
+}
