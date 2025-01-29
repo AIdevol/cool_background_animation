@@ -9,5 +9,6 @@ void main() {
    RainbowBackground();
    CelebrationAnimation();
    MultipleBalloons();
+   InfiniteSpiralMotionAnimation();
   });
 }
