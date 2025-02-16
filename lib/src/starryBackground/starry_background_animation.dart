@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '../../custom_model/starry_background_model.dart';
+
 class StarConfig {
   final double minSize;
   final double maxSize;
@@ -232,27 +234,6 @@ class StarryBackgroundState extends State<StarryBackground>
   }
 }
 
-class ShootingStar {
-  final double startX;
-  final double startY;
-  final double angle;
-  final double speed;
-  double currentDistance = 0;
-
-  ShootingStar({
-    required this.startX,
-    required this.startY,
-    required this.angle,
-    required this.speed,
-  });
-
-  Offset getCurrentPosition() {
-    return Offset(
-      startX + cos(angle) * currentDistance,
-      startY + sin(angle) * currentDistance,
-    );
-  }
-}
 
 class StarPainter extends CustomPainter {
   final List<Star> stars;

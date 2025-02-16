@@ -10,5 +10,6 @@ void main() {
    CelebrationAnimation();
    MultipleBalloons();
    InfiniteSpiralMotionAnimation();
+   StarryBackground();
   });
 }
