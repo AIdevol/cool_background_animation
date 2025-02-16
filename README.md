@@ -16,7 +16,7 @@ Add the package to your project by including it in your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  cool_background_animation: ^0.0.3
+  cool_background_animation: ^0.0.5
 ```
 
 Run the following command to fetch the package:
@@ -129,6 +129,30 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body:
+        StarryBackground(
+          numberOfStars: 200,
+          starConfig: StarConfig(
+            minSize: 1.0,
+            maxSize: 4.0,
+            starColor: Colors.amber,
+            movementSpeed: 2.0,
+            enableTwinkling: true,
+          ),
+          backgroundGradient: LinearGradient(
+            colors: [Colors.red, Colors.blue.shade900],
+          ),
+          enableShootingStars: true,
+          shootingStarInterval: Duration(seconds: 3),
+        ));
+  }
+}
 ```
 
 ---
