@@ -11,5 +11,6 @@ void main() {
    MultipleBalloons();
    InfiniteSpiralMotionAnimation();
    StarryBackground();
+   AnimatedCircles();
   });
 }

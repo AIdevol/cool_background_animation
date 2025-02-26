@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData.dark(),
-    home: AnimatedCircles(),
-  ));
-}
-
 class AnimatedCircles extends StatefulWidget {
   @override
   _AnimatedCirclesState createState() => _AnimatedCirclesState();

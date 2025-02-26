@@ -9,3 +9,4 @@ export 'src/ballons_animation/ballons_animation.dart';
 export 'src/animated_background_symbols/animated_Symbol_background.dart';
 export 'src/infiniteSprialMotionAnimation/infinaiteSpiral_background_animation.dart';
 export 'src/starryBackground/starry_background_animation.dart';
+export 'src/animated_circles/animated_circles.dart';
