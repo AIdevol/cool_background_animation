@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../custom_model/enums/enum.dart';
 
-
 class InfiniteSpiralMotionAnimation extends StatefulWidget {
   final double size;
   final List<Color> colors;
@@ -127,11 +126,12 @@ class InfiniteSpiralMotionAnimation extends StatefulWidget {
         super(key: key);
 
   @override
-  State<InfiniteSpiralMotionAnimation> createState() => _InfiniteSpiralMotionAnimationState();
+  State<InfiniteSpiralMotionAnimation> createState() =>
+      _InfiniteSpiralMotionAnimationState();
 }
 
-class _InfiniteSpiralMotionAnimationState extends State<InfiniteSpiralMotionAnimation>
-    with TickerProviderStateMixin {
+class _InfiniteSpiralMotionAnimationState
+    extends State<InfiniteSpiralMotionAnimation> with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _motionController;
   late AnimationController _pulseController;
@@ -146,17 +146,23 @@ class _InfiniteSpiralMotionAnimationState extends State<InfiniteSpiralMotionAnim
   final math.Random _random = math.Random();
   List<Particle> _particles = [];
 
-  bool get _enableForward => widget.direction == AnimationDirection.forward ||
+  bool get _enableForward =>
+      widget.direction == AnimationDirection.forward ||
       widget.direction == AnimationDirection.all;
-  bool get _enableSpiral => widget.direction == AnimationDirection.spiral ||
+  bool get _enableSpiral =>
+      widget.direction == AnimationDirection.spiral ||
       widget.direction == AnimationDirection.all;
-  bool get _enableWave => widget.direction == AnimationDirection.wave ||
+  bool get _enableWave =>
+      widget.direction == AnimationDirection.wave ||
       widget.direction == AnimationDirection.all;
-  bool get _enablePulse => widget.direction == AnimationDirection.pulse ||
+  bool get _enablePulse =>
+      widget.direction == AnimationDirection.pulse ||
       widget.direction == AnimationDirection.all;
-  bool get _enableBounce => widget.direction == AnimationDirection.bounce ||
+  bool get _enableBounce =>
+      widget.direction == AnimationDirection.bounce ||
       widget.direction == AnimationDirection.all;
-  bool get _enableZigzag => widget.direction == AnimationDirection.zigzag ||
+  bool get _enableZigzag =>
+      widget.direction == AnimationDirection.zigzag ||
       widget.direction == AnimationDirection.all;
 
   @override
@@ -309,11 +315,15 @@ class _InfiniteSpiralMotionAnimationState extends State<InfiniteSpiralMotionAnim
                   motionProgress: _motionAnimation.value,
                   pulseProgress: _enablePulse ? _pulseController.value : 0,
                   waveProgress: _enableWave ? _waveController.value : 0,
-                  colorShiftProgress: widget.enableColorShift ? _colorShiftController.value : 0,
+                  colorShiftProgress:
+                      widget.enableColorShift ? _colorShiftController.value : 0,
                   bounceProgress: _enableBounce ? _bounceController.value : 0,
                   zigzagProgress: _enableZigzag ? _zigzagController.value : 0,
-                  shimmerProgress: widget.enableShimmer ? _shimmerController.value : 0,
-                  pulsingBorderProgress: widget.enablePulsingBorder ? _pulsingBorderController.value : 0,
+                  shimmerProgress:
+                      widget.enableShimmer ? _shimmerController.value : 0,
+                  pulsingBorderProgress: widget.enablePulsingBorder
+                      ? _pulsingBorderController.value
+                      : 0,
                   colors: widget.colors,
                   numberOfRings: widget.numberOfRings,
                   minScale: widget.minScale,
@@ -374,8 +384,10 @@ class Particle {
 
   void update(Size size) {
     position += velocity;
-    if (position.dx < 0 || position.dx > size.width) velocity = Offset(-velocity.dx, velocity.dy);
-    if (position.dy < 0 || position.dy > size.height) velocity = Offset(velocity.dx, -velocity.dy);
+    if (position.dx < 0 || position.dx > size.width)
+      velocity = Offset(-velocity.dx, velocity.dy);
+    if (position.dy < 0 || position.dy > size.height)
+      velocity = Offset(velocity.dx, -velocity.dy);
   }
 }
 
@@ -503,9 +515,8 @@ class _EnhancedSpiralPainter extends CustomPainter {
       }
 
       // Calculate perspective and scale
-      double perspectiveScale = enableForward
-          ? 1 / (1 + (zProgress * tunnelDepth))
-          : 1.0;
+      double perspectiveScale =
+          enableForward ? 1 / (1 + (zProgress * tunnelDepth)) : 1.0;
 
       final motionScale = minScale + (maxScale - minScale) * motionProgress;
       final pulseScale = pulseProgress * pulseIntensity;
@@ -522,19 +533,22 @@ class _EnhancedSpiralPainter extends CustomPainter {
 
       // Add wave effect
       if (enableWave) {
-        final wave = math.sin(progress * math.pi * 2 + waveProgress * math.pi * 2);
+        final wave =
+            math.sin(progress * math.pi * 2 + waveProgress * math.pi * 2);
         radius += wave * waveAmplitude;
       }
 
       // Add zigzag effect
       if (zigzagProgress > 0) {
-        final zigzag = math.sin(progress * math.pi * zigzagFrequency + zigzagProgress * math.pi * 2);
+        final zigzag = math.sin(progress * math.pi * zigzagFrequency +
+            zigzagProgress * math.pi * 2);
         radius += zigzag * zigzagAmplitude;
       }
 
       // Add distortion
       if (enableDistortion) {
-        final distortion = math.sin(progress * math.pi * 4 + rotationProgress * math.pi * 2);
+        final distortion =
+            math.sin(progress * math.pi * 4 + rotationProgress * math.pi * 2);
         radius += distortion * distortionIntensity * maxRadius;
       }
 
@@ -546,7 +560,8 @@ class _EnhancedSpiralPainter extends CustomPainter {
 
       // Calculate color based on blend mode
       final depthProgress = math.pow(1 - progress, depthEffect).toDouble();
-      final opacity = startOpacity + (endOpacity - startOpacity) * depthProgress;
+      final opacity =
+          startOpacity + (endOpacity - startOpacity) * depthProgress;
 
       Color ringColor;
       switch (colorBlendMode) {
@@ -556,7 +571,8 @@ class _EnhancedSpiralPainter extends CustomPainter {
         case ColorBlendMode.pulse:
           final pulseColor = colors[i % colors.length];
           final pulseAmount = (math.sin(pulseProgress * math.pi * 2) + 1) / 2;
-          ringColor = Color.lerp(pulseColor.withOpacity(0.5), pulseColor, pulseAmount)!;
+          ringColor =
+              Color.lerp(pulseColor.withOpacity(0.5), pulseColor, pulseAmount)!;
           break;
         case ColorBlendMode.random:
           ringColor = colors[math.Random().nextInt(colors.length)];
@@ -564,7 +580,8 @@ class _EnhancedSpiralPainter extends CustomPainter {
         case ColorBlendMode.gradient:
           final colorIndex = i % colors.length;
           final nextColorIndex = (i + 1) % colors.length;
-          ringColor = Color.lerp(colors[colorIndex], colors[nextColorIndex], progress)!;
+          ringColor =
+              Color.lerp(colors[colorIndex], colors[nextColorIndex], progress)!;
           break;
         default:
           final colorIndex = i % colors.length;
@@ -576,7 +593,8 @@ class _EnhancedSpiralPainter extends CustomPainter {
         final shimmerPosition = (shimmerProgress + progress) % 1.0;
         final shimmerDistance = (shimmerPosition - progress).abs();
         if (shimmerDistance < shimmerWidth / maxRadius) {
-          final shimmerAmount = 1 - (shimmerDistance / (shimmerWidth / maxRadius));
+          final shimmerAmount =
+              1 - (shimmerDistance / (shimmerWidth / maxRadius));
           ringColor = Color.lerp(ringColor, Colors.white, shimmerAmount * 0.5)!;
         }
       }

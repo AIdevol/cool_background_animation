@@ -52,7 +52,8 @@ class _BubbleBackgroundState extends State<BubbleBackground>
   void _initializeBubbles(Size size) {
     bubbles = List.generate(
       widget.numberOfBubbles,
-          (_) => Bubble.random(size.width, size.height, widget.config, widget.bubbleColors),
+      (_) => Bubble.random(
+          size.width, size.height, widget.config, widget.bubbleColors),
     );
   }
 
@@ -69,7 +70,8 @@ class _BubbleBackgroundState extends State<BubbleBackground>
       bubbles.removeWhere((bubble) => bubble.isOffScreen());
 
       while (bubbles.length < widget.numberOfBubbles) {
-        bubbles.add(Bubble.random(_size!.width, _size!.height, widget.config, widget.bubbleColors));
+        bubbles.add(Bubble.random(
+            _size!.width, _size!.height, widget.config, widget.bubbleColors));
       }
     });
   }

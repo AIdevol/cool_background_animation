@@ -108,10 +108,11 @@ class StarryBackgroundState extends State<StarryBackground>
   void _initializeStars() {
     stars = List.generate(
       widget.numberOfStars,
-          (index) => Star(
+      (index) => Star(
         x: random.nextDouble() * 100,
         y: random.nextDouble() * 100,
-        size: _randomRange(widget.starConfig.minSize, widget.starConfig.maxSize),
+        size:
+            _randomRange(widget.starConfig.minSize, widget.starConfig.maxSize),
         baseOpacity: _randomRange(
           widget.starConfig.minOpacity,
           widget.starConfig.maxOpacity,
@@ -143,12 +144,13 @@ class StarryBackgroundState extends State<StarryBackground>
     if (widget.starConfig.enableTwinkling) {
       twinkleControllers = List.generate(
         widget.numberOfStars,
-            (index) => AnimationController(
+        (index) => AnimationController(
           duration: Duration(
             milliseconds: random.nextInt(
-              widget.starConfig.maxTwinkleDuration.inMilliseconds -
-                  widget.starConfig.minTwinkleDuration.inMilliseconds,
-            ) + widget.starConfig.minTwinkleDuration.inMilliseconds,
+                  widget.starConfig.maxTwinkleDuration.inMilliseconds -
+                      widget.starConfig.minTwinkleDuration.inMilliseconds,
+                ) +
+                widget.starConfig.minTwinkleDuration.inMilliseconds,
           ),
           vsync: this,
         ),
@@ -166,7 +168,7 @@ class StarryBackgroundState extends State<StarryBackground>
       for (var controller in twinkleControllers) {
         Future.delayed(
           Duration(milliseconds: random.nextInt(2000)),
-              () => controller.repeat(reverse: true),
+          () => controller.repeat(reverse: true),
         );
       }
     }
@@ -225,7 +227,8 @@ class StarryBackgroundState extends State<StarryBackground>
         painter: StarPainter(
           stars: stars,
           starConfig: widget.starConfig,
-          animations: widget.starConfig.enableTwinkling ? twinkleAnimations : null,
+          animations:
+              widget.starConfig.enableTwinkling ? twinkleAnimations : null,
           shootingStars: shootingStars,
         ),
         size: Size.infinite,
@@ -233,7 +236,6 @@ class StarryBackgroundState extends State<StarryBackground>
     );
   }
 }
-
 
 class StarPainter extends CustomPainter {
   final List<Star> stars;
@@ -293,4 +295,3 @@ class StarPainter extends CustomPainter {
   @override
   bool shouldRepaint(StarPainter oldDelegate) => true;
 }
-

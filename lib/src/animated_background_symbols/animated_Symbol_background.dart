@@ -47,7 +47,8 @@ class AnimatedBackgroundSymbols extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<AnimatedBackgroundSymbols> createState() => _AnimatedBackgroundSymbolsState();
+  State<AnimatedBackgroundSymbols> createState() =>
+      _AnimatedBackgroundSymbolsState();
 }
 
 class _AnimatedBackgroundSymbolsState extends State<AnimatedBackgroundSymbols> {
@@ -101,7 +102,8 @@ class _AnimatedBackgroundSymbolsState extends State<AnimatedBackgroundSymbols> {
 
   double _getRandomSize() {
     if (widget.randomSizes) {
-      return widget.minSize + random.nextDouble() * (widget.maxSize - widget.minSize);
+      return widget.minSize +
+          random.nextDouble() * (widget.maxSize - widget.minSize);
     }
     return widget.symbolSize;
   }
@@ -109,10 +111,13 @@ class _AnimatedBackgroundSymbolsState extends State<AnimatedBackgroundSymbols> {
   void _addSymbol() {
     if (screenWidth == null || screenHeight == null) return;
 
-    final symbol = widget.customSymbols[random.nextInt(widget.customSymbols.length)];
+    final symbol =
+        widget.customSymbols[random.nextInt(widget.customSymbols.length)];
     final xPosition = random.nextDouble() * screenWidth!;
     final duration = (widget.minAnimationDuration * 1000 +
-        random.nextDouble() * (widget.maxAnimationDuration - widget.minAnimationDuration) * 1000)
+            random.nextDouble() *
+                (widget.maxAnimationDuration - widget.minAnimationDuration) *
+                1000)
         .toInt();
 
     final newSymbol = SymbolData(

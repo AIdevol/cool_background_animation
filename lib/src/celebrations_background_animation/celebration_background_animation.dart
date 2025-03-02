@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'dart:ui'as ui;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../../custom_model/celebrations_model_animation.dart';
 import '../../custom_model/enums/enum.dart';
@@ -113,10 +113,9 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
 
     _particles = List.generate(
       widget.particleCount,
-          (index) => _createParticle(index),
+      (index) => _createParticle(index),
     );
   }
-
 
   Particle _createParticle(int index) {
     final angle = widget.animationType == AnimationType.firework
@@ -125,7 +124,8 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
 
     return Particle(
       color: _getRandomColor(),
-      size: _random.nextDouble() * (widget.maxSize - widget.minSize) + widget.minSize,
+      size: _random.nextDouble() * (widget.maxSize - widget.minSize) +
+          widget.minSize,
       angle: angle,
       velocity: widget.initialVelocity * (0.8 + _random.nextDouble() * 0.4),
       rotationAngle: _random.nextDouble() * 2 * math.pi,
@@ -137,14 +137,15 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
   }
 
   Color _getRandomColor() {
-    final colors = widget.colors ?? [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.yellow,
-      Colors.purple,
-      Colors.orange,
-    ];
+    final colors = widget.colors ??
+        [
+          Colors.red,
+          Colors.blue,
+          Colors.green,
+          Colors.yellow,
+          Colors.purple,
+          Colors.orange,
+        ];
     return colors[_random.nextInt(colors.length)];
   }
 
@@ -160,7 +161,10 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
               begin: widget.gradientBegin,
               end: widget.gradientEnd,
               colors: widget.backgroundGradientColors ??
-                  [Colors.blue.withOpacity(0.3), Colors.purple.withOpacity(0.3)],
+                  [
+                    Colors.blue.withOpacity(0.3),
+                    Colors.purple.withOpacity(0.3)
+                  ],
             ),
           ),
         );
@@ -176,9 +180,12 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
                   end: widget.gradientEnd,
                   colors: List.generate(
                     widget.backgroundGradientColors?.length ?? 2,
-                        (index) {
+                    (index) {
                       final colors = widget.backgroundGradientColors ??
-                          [Colors.blue.withOpacity(0.3), Colors.purple.withOpacity(0.3)];
+                          [
+                            Colors.blue.withOpacity(0.3),
+                            Colors.purple.withOpacity(0.3)
+                          ];
                       final nextIndex = (index + 1) % colors.length;
                       return Color.lerp(
                         colors[index],
@@ -255,7 +262,8 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
 
       case AnimationType.fountain:
         final t = progress * widget.duration.inMilliseconds / 1000;
-        final dx = particle.velocity * math.cos(particle.angle) * t * widget.spread;
+        final dx =
+            particle.velocity * math.cos(particle.angle) * t * widget.spread;
         final dy = particle.velocity * math.sin(particle.angle) * t -
             0.5 * widget.gravity * t * t;
         return Offset(dx, dy);
@@ -271,7 +279,10 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
       case AnimationType.rain:
         final adjustedProgress = (progress + particle.startTime) % 1.0;
         return Offset(
-          particle.velocity * math.cos(particle.angle) * adjustedProgress * widget.spread,
+          particle.velocity *
+              math.cos(particle.angle) *
+              adjustedProgress *
+              widget.spread,
           particle.velocity * adjustedProgress * 2,
         );
 
@@ -304,13 +315,19 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
     final velocity = particle.velocity;
 
     // Apply air resistance
-    final vx = velocity * math.cos(particle.angle) * math.exp(-widget.airResistance * t);
-    final vy = velocity * math.sin(particle.angle) * math.exp(-widget.airResistance * t) +
+    final vx = velocity *
+        math.cos(particle.angle) *
+        math.exp(-widget.airResistance * t);
+    final vy = velocity *
+            math.sin(particle.angle) *
+            math.exp(-widget.airResistance * t) +
         widget.gravity * t;
 
     // Add turbulence
-    final turbX = math.sin(t * 10 + particle.startTime * 20) * widget.turbulence * 50;
-    final turbY = math.cos(t * 15 + particle.startTime * 20) * widget.turbulence * 50;
+    final turbX =
+        math.sin(t * 10 + particle.startTime * 20) * widget.turbulence * 50;
+    final turbY =
+        math.cos(t * 15 + particle.startTime * 20) * widget.turbulence * 50;
 
     final x = vx * t * widget.spread + turbX;
     final y = (vy * t - 0.5 * widget.gravity * t * t) * widget.spread + turbY;
@@ -326,7 +343,8 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
         angle: progress * widget.rotationSpeed * 2 * math.pi,
         child: result,
       );
-    }if (widget.blurParticles) {
+    }
+    if (widget.blurParticles) {
       result = ImageFiltered(
         imageFilter: ui.ImageFilter.blur(
           sigmaX: widget.blurRadius * (1 - progress),
@@ -365,7 +383,7 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
         if (widget.enableTrails)
           ...List.generate(
             widget.particleCount * widget.trailLength,
-                (index) {
+            (index) {
               final particleIndex = index ~/ widget.trailLength;
               final trailIndex = index % widget.trailLength;
               return _buildParticleTrail(particleIndex, trailIndex);
@@ -374,7 +392,7 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
         else
           ...List.generate(
             widget.particleCount,
-                (index) => _buildParticleWidget(index),
+            (index) => _buildParticleWidget(index),
           ),
       ],
     );
@@ -428,12 +446,12 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
             offset: Offset(-particle.size / 2, -particle.size / 2),
             child: widget.fadeOut
                 ? Opacity(
-              opacity: 1 - progress,
-              child: _buildParticleWithEffects(
-                _buildParticle(particle),
-                progress,
-              ),
-            )
+                    opacity: 1 - progress,
+                    child: _buildParticleWithEffects(
+                      _buildParticle(particle),
+                      progress,
+                    ),
+                  )
                 : _buildParticleWithEffects(_buildParticle(particle), progress),
           ),
         );
@@ -448,4 +466,3 @@ class _CelebrationAnimationState extends State<CelebrationAnimation>
     super.dispose();
   }
 }
-

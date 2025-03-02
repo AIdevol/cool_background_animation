@@ -86,17 +86,11 @@ class HeartPainter extends CustomPainter {
 
     path.moveTo(size.width / 2, size.height / 5);
 
-    path.cubicTo(
-        size.width / 8, 0,
-        -size.width / 4, size.height / 2,
-        size.width / 2, size.height
-    );
+    path.cubicTo(size.width / 8, 0, -size.width / 4, size.height / 2,
+        size.width / 2, size.height);
 
-    path.cubicTo(
-        size.width * 1.25, size.height / 2,
-        size.width * 7 / 8, 0,
-        size.width / 2, size.height / 5
-    );
+    path.cubicTo(size.width * 1.25, size.height / 2, size.width * 7 / 8, 0,
+        size.width / 2, size.height / 5);
 
     canvas.drawPath(path, paint);
   }

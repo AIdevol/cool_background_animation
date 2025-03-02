@@ -4,7 +4,7 @@ import '../../custom_model/rainbow_config.dart';
 
 class RainbowBackground extends StatefulWidget {
   const RainbowBackground({
-    super.key,  // Corrected: Using super.key for the constructor parameter
+    super.key, // Corrected: Using super.key for the constructor parameter
     this.child,
     this.config = const RainbowConfig(),
   });
@@ -106,17 +106,22 @@ class RainbowPainter extends CustomPainter {
           ? config.colors[i + 1]
           : config.colors[0];
 
-      final double radius = maxRadius - (i * (config.arcThickness + config.arcSpacing));
+      final double radius =
+          maxRadius - (i * (config.arcThickness + config.arcSpacing));
 
       // Apply shimmer effect
       final double opacity = config.enableShimmer
-          ? (Math.sin(_normalizeIndex(i) * Math.pi + shimmerValue * Math.pi * 2) + 1) / 2
+          ? (Math.sin(_normalizeIndex(i) * Math.pi +
+                      shimmerValue * Math.pi * 2) +
+                  1) /
+              2
           : 1.0;
 
       if (config.useGradient) {
         paint.shader = SweepGradient(
           colors: [
-            color.withAlpha((opacity * 255).toInt()),  // Replaced withOpacity with withAlpha
+            color.withAlpha(
+                (opacity * 255).toInt()), // Replaced withOpacity with withAlpha
             nextColor.withAlpha((opacity * 255).toInt()),
             color.withAlpha((opacity * 255).toInt()),
           ],
@@ -131,7 +136,8 @@ class RainbowPainter extends CustomPainter {
           ),
         );
       } else {
-        paint.color = color.withAlpha((opacity * 255).toInt());  // Replaced withOpacity with withAlpha
+        paint.color = color.withAlpha(
+            (opacity * 255).toInt()); // Replaced withOpacity with withAlpha
         paint.shader = null;
       }
 

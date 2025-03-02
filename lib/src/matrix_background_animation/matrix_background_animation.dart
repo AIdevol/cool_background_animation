@@ -69,7 +69,8 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
   final Random random = Random();
   bool isRunning = false;
 
-  static const defaultCharacters = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
+  static const defaultCharacters =
+      'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
 
   @override
   void initState() {
@@ -88,7 +89,8 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
       final xPosition = random.nextDouble() * width;
       return MatrixColumn(
         x: xPosition,
-        speed: widget.speed * (widget.randomizeSpeed ? random.nextDouble() + 0.5 : 1),
+        speed: widget.speed *
+            (widget.randomizeSpeed ? random.nextDouble() + 0.5 : 1),
         characters: generateRandomCharacters(),
         y: random.nextDouble() * -500,
       );
@@ -99,7 +101,7 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
     final characters = widget.customCharacters ?? defaultCharacters;
     return List.generate(
       widget.charactersPerColumn,
-          (_) => characters[random.nextInt(characters.length)],
+      (_) => characters[random.nextInt(characters.length)],
     );
   }
 
@@ -108,7 +110,8 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
 
     initializeColumns();
     timer?.cancel();
-    timer = Timer.periodic(Duration(milliseconds: widget.updateInterval), (timer) {
+    timer =
+        Timer.periodic(Duration(milliseconds: widget.updateInterval), (timer) {
       if (!mounted) return;
 
       setState(() {

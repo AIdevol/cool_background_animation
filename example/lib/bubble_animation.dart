@@ -46,7 +46,8 @@ class _AnimatedCirclesState extends State<AnimatedCircles>
   void _updateSpeed(double value) {
     setState(() {
       speedMultiplier = value;
-      _controller.duration = Duration(milliseconds: (6000 / speedMultiplier).round());
+      _controller.duration =
+          Duration(milliseconds: (6000 / speedMultiplier).round());
       if (_controller.isAnimating) {
         _controller.repeat();
       }
@@ -82,7 +83,8 @@ class _AnimatedCirclesState extends State<AnimatedCircles>
                 animation: _controller,
                 builder: (context, child) {
                   return CustomPaint(
-                    size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.width),
+                    size: Size(MediaQuery.of(context).size.width,
+                        MediaQuery.of(context).size.width),
                     painter: CirclePainter(
                       _controller.value,
                       circleCount,
@@ -288,7 +290,8 @@ class _AnimatedCirclesState extends State<AnimatedCircles>
             color: color,
             shape: BoxShape.circle,
             border: Border.all(
-              color: backgroundColor == color ? Colors.white : Colors.transparent,
+              color:
+                  backgroundColor == color ? Colors.white : Colors.transparent,
               width: 2,
             ),
           ),
@@ -308,14 +311,14 @@ class CirclePainter extends CustomPainter {
   final bool usePulseEffect;
 
   CirclePainter(
-      this.animationValue,
-      this.circleCount,
-      this.baseColor,
-      this.strokeWidth,
-      this.useRainbowColors,
-      this.useBlurEffect,
-      this.usePulseEffect,
-      );
+    this.animationValue,
+    this.circleCount,
+    this.baseColor,
+    this.strokeWidth,
+    this.useRainbowColors,
+    this.useBlurEffect,
+    this.usePulseEffect,
+  );
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -333,7 +336,9 @@ class CirclePainter extends CustomPainter {
 
       // Add pulsing effect if enabled
       if (usePulseEffect) {
-        final pulseAmount = math.sin(animationValue * math.pi * 2 + (i / circleCount) * math.pi * 2) * 5;
+        final pulseAmount = math.sin(animationValue * math.pi * 2 +
+                (i / circleCount) * math.pi * 2) *
+            5;
         radius += pulseAmount;
       }
 
@@ -343,10 +348,13 @@ class CirclePainter extends CustomPainter {
         // Create rainbow effect
         final hue = (progress * 360 + animationValue * 360) % 360;
         circleColor = HSVColor.fromAHSV(
-          0.7 + (0.3 * math.sin(animationValue * math.pi * 2 + i)),  // opacity variation
-          hue,                                                         // hue
-          0.8,                                                         // saturation
-          0.9,                                                         // value (brightness)
+          0.7 +
+              (0.3 *
+                  math.sin(
+                      animationValue * math.pi * 2 + i)), // opacity variation
+          hue, // hue
+          0.8, // saturation
+          0.9, // value (brightness)
         ).toColor();
       } else {
         // Use the base color with varying opacity

@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 
-enum RainbowPosition {
-  top,
-  bottom
-}
+enum RainbowPosition { top, bottom }
 
-enum RainbowOrientation {
-  up,
-  down
-}
+enum RainbowOrientation { up, down }
 
 class RainbowConfig {
   /// The colors of the rainbow
@@ -68,7 +62,7 @@ class RainbowConfig {
     this.enableShimmer = true,
     this.position = RainbowPosition.bottom,
     this.orientation = RainbowOrientation.up,
-  }) : assert(positionOffset >= 0 && positionOffset <= 1),
-       assert(heightRatio > 0 && heightRatio <= 1),
-       assert(glowIntensity >= 0 && glowIntensity <= 1);
+  })  : assert(positionOffset >= 0 && positionOffset <= 1),
+        assert(heightRatio > 0 && heightRatio <= 1),
+        assert(glowIntensity >= 0 && glowIntensity <= 1);
 }

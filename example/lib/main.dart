@@ -14,9 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Star Falling Example',
-      theme:  ThemeData.dark(),
-
-    home: const MyHomePage(),
+      theme: ThemeData.dark(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -26,7 +25,6 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: AnimatedCircles());
+    return Scaffold(body: AnimatedCircles());
   }
 }

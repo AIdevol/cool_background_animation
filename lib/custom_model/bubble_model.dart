@@ -53,14 +53,18 @@ class Bubble {
     required this.wobbleSpeed,
   });
 
-  factory Bubble.random(double maxWidth, double maxHeight, BubbleConfig config, List<Color> colors) {
+  factory Bubble.random(double maxWidth, double maxHeight, BubbleConfig config,
+      List<Color> colors) {
     final random = Random();
     return Bubble(
       x: random.nextDouble() * maxWidth,
       y: maxHeight + (random.nextDouble() * 40 + config.maxRadius),
-      radius: random.nextDouble() * (config.maxRadius - config.minRadius) + config.minRadius,
-      speed: random.nextDouble() * (config.maxSpeed - config.minSpeed) + config.minSpeed,
-      opacity: random.nextDouble() * (config.maxOpacity - config.minOpacity) + config.minOpacity,
+      radius: random.nextDouble() * (config.maxRadius - config.minRadius) +
+          config.minRadius,
+      speed: random.nextDouble() * (config.maxSpeed - config.minSpeed) +
+          config.minSpeed,
+      opacity: random.nextDouble() * (config.maxOpacity - config.minOpacity) +
+          config.minOpacity,
       wobbleSpeed: random.nextDouble() * 2 * pi,
       color: colors[random.nextInt(colors.length)],
     );

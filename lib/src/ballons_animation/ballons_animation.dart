@@ -97,11 +97,16 @@ class _MultipleBalloonsState extends State<MultipleBalloons> {
       balloons.add(
         BalloonConfig(
           color: activeColors[random.nextInt(activeColors.length)],
-          size: random.nextDouble() * (widget.maxSize - widget.minSize) + widget.minSize,
-          speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) + widget.minSpeed,
+          size: random.nextDouble() * (widget.maxSize - widget.minSize) +
+              widget.minSize,
+          speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) +
+              widget.minSpeed,
           startDelay: random.nextDouble() * widget.maxStartDelay,
-          startX: random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
-          swayAmount: random.nextDouble() * (widget.maxSwayAmount - widget.minSwayAmount) + widget.minSwayAmount,
+          startX:
+              random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
+          swayAmount: random.nextDouble() *
+                  (widget.maxSwayAmount - widget.minSwayAmount) +
+              widget.minSwayAmount,
         ),
       );
     }
@@ -141,11 +146,13 @@ class _MultipleBalloonsState extends State<MultipleBalloons> {
                 balloonShape: widget.balloonShape,
                 opacity: widget.opacity,
                 constraints: effectiveConstraints,
-                onComplete: widget.enableRespawn ? () {
-                  setState(() {
-                    config.startDelay = 0;
-                  });
-                } : null,
+                onComplete: widget.enableRespawn
+                    ? () {
+                        setState(() {
+                          config.startDelay = 0;
+                        });
+                      }
+                    : null,
               );
             }).toList(),
           ),
@@ -197,7 +204,8 @@ class FallingBalloon extends StatefulWidget {
   State<FallingBalloon> createState() => _FallingBalloonState();
 }
 
-class _FallingBalloonState extends State<FallingBalloon> with SingleTickerProviderStateMixin {
+class _FallingBalloonState extends State<FallingBalloon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   Animation<double>? _positionY;
   Animation<double>? _positionX;
@@ -206,11 +214,14 @@ class _FallingBalloonState extends State<FallingBalloon> with SingleTickerProvid
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: (widget.animationDuration.inMilliseconds / widget.speed).round()),
+      duration: Duration(
+          milliseconds:
+              (widget.animationDuration.inMilliseconds / widget.speed).round()),
       vsync: this,
     );
 
-    Future.delayed(Duration(milliseconds: (widget.startDelay * 1000).round()), () {
+    Future.delayed(Duration(milliseconds: (widget.startDelay * 1000).round()),
+        () {
       if (mounted) {
         _initializeAnimations();
       }
@@ -357,14 +368,20 @@ class BalloonPainter extends CustomPainter {
 
     path.moveTo(width / 2, height * 0.3);
     path.cubicTo(
-      width * 0.2, height * 0.1,
-      -width * 0.25, height * 0.5,
-      width / 2, height * 0.8,
+      width * 0.2,
+      height * 0.1,
+      -width * 0.25,
+      height * 0.5,
+      width / 2,
+      height * 0.8,
     );
     path.cubicTo(
-      width * 1.25, height * 0.5,
-      width * 0.8, height * 0.1,
-      width / 2, height * 0.3,
+      width * 1.25,
+      height * 0.5,
+      width * 0.8,
+      height * 0.1,
+      width / 2,
+      height * 0.3,
     );
   }
 
@@ -398,10 +415,10 @@ class BalloonPainter extends CustomPainter {
   @override
   bool shouldRepaint(BalloonPainter oldDelegate) =>
       color != oldDelegate.color ||
-          withString != oldDelegate.withString ||
-          stringLength != oldDelegate.stringLength ||
-          stringColor != oldDelegate.stringColor ||
-          stringWidth != oldDelegate.stringWidth ||
-          shape != oldDelegate.shape ||
-          opacity != oldDelegate.opacity;
+      withString != oldDelegate.withString ||
+      stringLength != oldDelegate.stringLength ||
+      stringColor != oldDelegate.stringColor ||
+      stringWidth != oldDelegate.stringWidth ||
+      shape != oldDelegate.shape ||
+      opacity != oldDelegate.opacity;
 }
