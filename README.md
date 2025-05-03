@@ -16,7 +16,7 @@ Add the package to your project by including it in your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  cool_background_animation: ^0.0.6
+  cool_background_animation: ^0.0.6+1
 ```
 
 Run the following command to fetch the package:
