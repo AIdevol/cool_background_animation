@@ -10,3 +10,4 @@ export 'src/animated_background_symbols/animated_Symbol_background.dart';
 export 'src/infiniteSprialMotionAnimation/infinaiteSpiral_background_animation.dart';
 export 'src/starryBackground/starry_background_animation.dart';
 export 'src/animated_circles/animated_circles.dart';
+export 'src/radial_burst_effect/radial_burst_effect_animation.dart';

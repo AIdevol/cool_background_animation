@@ -12,5 +12,6 @@ void main() {
     InfiniteSpiralMotionAnimation();
     StarryBackground();
     AnimatedCircles();
+    RadialBurst();
   });
 }

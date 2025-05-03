@@ -115,7 +115,7 @@ class RadialBurst extends StatefulWidget {
         centerGlowColors.length >= 2, 'At least 2 glow colors are required'),
         assert(centerGlowStops.length == centerGlowColors.length,
         'The number of stops must match the number of colors'),
-        // assert(rayColors.isNotEmpty, 'Ray colors list cannot be empty'),
+  // assert(rayColors.isNotEmpty, 'Ray colors list cannot be empty'),
         super(key: key);
 
   @override
