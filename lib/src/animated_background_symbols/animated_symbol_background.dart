@@ -22,6 +22,8 @@ class AnimatedBackgroundSymbols extends StatefulWidget {
   final double glowRadius;
   final FontWeight fontWeight;
   final String fontFamily;
+  // Add child widget property
+  final Widget? child;
 
   const AnimatedBackgroundSymbols({
     Key? key,
@@ -44,6 +46,7 @@ class AnimatedBackgroundSymbols extends StatefulWidget {
     this.glowRadius = 5.0,
     this.fontWeight = FontWeight.normal,
     required this.fontFamily,
+    this.child, // Add child widget
   }) : super(key: key);
 
   @override
@@ -112,12 +115,12 @@ class _AnimatedBackgroundSymbolsState extends State<AnimatedBackgroundSymbols> {
     if (screenWidth == null || screenHeight == null) return;
 
     final symbol =
-        widget.customSymbols[random.nextInt(widget.customSymbols.length)];
+    widget.customSymbols[random.nextInt(widget.customSymbols.length)];
     final xPosition = random.nextDouble() * screenWidth!;
     final duration = (widget.minAnimationDuration * 1000 +
-            random.nextDouble() *
-                (widget.maxAnimationDuration - widget.minAnimationDuration) *
-                1000)
+        random.nextDouble() *
+            (widget.maxAnimationDuration - widget.minAnimationDuration) *
+            1000)
         .toInt();
 
     final newSymbol = SymbolData(
@@ -148,19 +151,26 @@ class _AnimatedBackgroundSymbolsState extends State<AnimatedBackgroundSymbols> {
         screenHeight = constraints.maxHeight;
 
         return Stack(
-          children: symbols.map((symbolData) {
-            return AnimatedSymbol(
-              data: symbolData,
-              rotationSpeed: widget.rotationSpeed,
-              animationCurve: widget.animationCurve,
-              opacity: widget.opacity,
-              enableGlow: widget.enableGlow,
-              glowRadius: widget.glowRadius,
-              fontWeight: widget.fontWeight,
-              fontFamily: widget.fontFamily,
-              screenHeight: screenHeight!,
-            );
-          }).toList(),
+          children: [
+            ...symbols.map((symbolData) {
+              return AnimatedSymbol(
+                data: symbolData,
+                rotationSpeed: widget.rotationSpeed,
+                animationCurve: widget.animationCurve,
+                opacity: widget.opacity,
+                enableGlow: widget.enableGlow,
+                glowRadius: widget.glowRadius,
+                fontWeight: widget.fontWeight,
+                fontFamily: widget.fontFamily,
+                screenHeight: screenHeight!,
+              );
+            }).toList(),
+
+            if (widget.child != null)
+              Positioned.fill(
+                child: widget.child!,
+              ),
+          ],
         );
       },
     );

@@ -11,10 +11,6 @@
 
 ---
 
-<div align="center">
-  <img src="cool_background_animation/example/assets/Untitleddesign-ezgif.com-video-to-gif-converter.gif" alt="GIF Preview" width="300"/>
-</div>
-
 
 ## 🛠️ Getting Started
 Add the package to your project by including it in your `pubspec.yaml` file:

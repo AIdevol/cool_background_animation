@@ -1,11 +1,127 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+
 import '../../custom_model/enums/enum.dart';
+
+class BalloonBackgroundWidget extends StatelessWidget {
+  /// The widget to display on top of the balloon animation
+  final Widget child;
+
+  /// Background color or gradient settings
+  final Color? backgroundColor;
+  final Gradient? backgroundGradient;
+
+  /// Balloon animation configuration
+  final int balloonCount;
+  final List<Color>? balloonColors;
+  final List<Gradient>? balloonGradients;
+  final double minSize;
+  final double maxSize;
+  final double minSpeed;
+  final double maxSpeed;
+  final double maxStartDelay;
+  final double minSwayAmount;
+  final double maxSwayAmount;
+  final Duration animationDuration;
+  final bool enableRespawn;
+  final bool showStrings;
+  final double stringLength;
+  final Color stringColor;
+  final double stringWidth;
+  final Curve swayingCurve;
+  final BalloonShape balloonShape;
+  final double? opacity;
+
+  /// Optional overlay color to ensure text readability
+  final Color? overlayColor;
+  final double overlayOpacity;
+
+  const BalloonBackgroundWidget({
+    Key? key,
+    required this.child,
+    this.backgroundColor,
+    this.backgroundGradient,
+    this.balloonCount = 20,
+    this.balloonColors,
+    this.balloonGradients,
+    this.minSize = 40,
+    this.maxSize = 70,
+    this.minSpeed = 0.5,
+    this.maxSpeed = 2.0,
+    this.maxStartDelay = 2.0,
+    this.minSwayAmount = 20,
+    this.maxSwayAmount = 100,
+    this.animationDuration = const Duration(seconds: 5),
+    this.enableRespawn = true,
+    this.showStrings = true,
+    this.stringLength = 1.6,
+    this.stringColor = Colors.grey,
+    this.stringWidth = 1.0,
+    this.swayingCurve = Curves.easeInOut,
+    this.balloonShape = BalloonShape.oval,
+    this.opacity,
+    this.overlayColor,
+    this.overlayOpacity = 0.2,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Background color or gradient
+        if (backgroundGradient != null)
+          Container(
+            decoration: BoxDecoration(
+              gradient: backgroundGradient,
+            ),
+          )
+        else if (backgroundColor != null)
+          Container(
+            color: backgroundColor,
+          ),
+
+        // Balloon animation
+        MultipleBalloons(
+          balloonCount: balloonCount,
+          colors: balloonColors,
+          gradients: balloonGradients,
+          minSize: minSize,
+          maxSize: maxSize,
+          minSpeed: minSpeed,
+          maxSpeed: maxSpeed,
+          maxStartDelay: maxStartDelay,
+          minSwayAmount: minSwayAmount,
+          maxSwayAmount: maxSwayAmount,
+          animationDuration: animationDuration,
+          enableRespawn: enableRespawn,
+          showStrings: showStrings,
+          stringLength: stringLength,
+          stringColor: stringColor,
+          stringWidth: stringWidth,
+          swayingCurve: swayingCurve,
+          balloonShape: balloonShape,
+          opacity: opacity,
+        ),
+
+        // Optional semi-transparent overlay for better readability of child content
+        if (overlayColor != null)
+          Container(
+            color: overlayColor!.withOpacity(overlayOpacity),
+          ),
+
+        // Main content on top
+        child,
+      ],
+    );
+  }
+}
 
 class MultipleBalloons extends StatefulWidget {
   final int balloonCount;
   final List<Color>? colors;
+  final List<Gradient>? gradients;
   final double minSize;
   final double maxSize;
   final double minSpeed;
@@ -28,6 +144,7 @@ class MultipleBalloons extends StatefulWidget {
     Key? key,
     this.balloonCount = 20,
     this.colors,
+    this.gradients,
     this.minSize = 40,
     this.maxSize = 70,
     this.minSpeed = 0.5,
@@ -52,7 +169,8 @@ class MultipleBalloons extends StatefulWidget {
 }
 
 class BalloonConfig {
-  final Color color;
+  final Color? color;
+  final Gradient? gradient;
   final double size;
   final double speed;
   double startDelay;
@@ -60,13 +178,14 @@ class BalloonConfig {
   final double swayAmount;
 
   BalloonConfig({
-    required this.color,
+    this.color,
+    this.gradient,
     required this.size,
     required this.speed,
     required this.startDelay,
     required this.startX,
     required this.swayAmount,
-  });
+  }) : assert(color != null || gradient != null, 'Either color or gradient must be provided');
 }
 
 class _MultipleBalloonsState extends State<MultipleBalloons> {
@@ -90,25 +209,64 @@ class _MultipleBalloonsState extends State<MultipleBalloons> {
       Colors.pink,
     ];
 
+    final defaultGradients = [
+      LinearGradient(
+        colors: [Colors.red, Colors.orange],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      LinearGradient(
+        colors: [Colors.blue, Colors.purple],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      LinearGradient(
+        colors: [Colors.green, Colors.yellow],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      LinearGradient(
+        colors: [Colors.pink, Colors.purple],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      LinearGradient(
+        colors: [Colors.orange, Colors.yellow],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ];
+
     final activeColors = widget.colors ?? defaultColors;
+    final activeGradients = widget.gradients ?? defaultGradients;
+    final useGradients = widget.gradients != null;
+
     balloons.clear();
 
     for (int i = 0; i < widget.balloonCount; i++) {
-      balloons.add(
-        BalloonConfig(
-          color: activeColors[random.nextInt(activeColors.length)],
-          size: random.nextDouble() * (widget.maxSize - widget.minSize) +
-              widget.minSize,
-          speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) +
-              widget.minSpeed,
-          startDelay: random.nextDouble() * widget.maxStartDelay,
-          startX:
-              random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
-          swayAmount: random.nextDouble() *
-                  (widget.maxSwayAmount - widget.minSwayAmount) +
-              widget.minSwayAmount,
-        ),
-      );
+      if (useGradients) {
+        balloons.add(
+          BalloonConfig(
+            gradient: activeGradients[random.nextInt(activeGradients.length)],
+            size: random.nextDouble() * (widget.maxSize - widget.minSize) + widget.minSize,
+            speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) + widget.minSpeed,
+            startDelay: random.nextDouble() * widget.maxStartDelay,
+            startX: random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
+            swayAmount: random.nextDouble() * (widget.maxSwayAmount - widget.minSwayAmount) + widget.minSwayAmount,
+          ),
+        );
+      } else {
+        balloons.add(
+          BalloonConfig(
+            color: activeColors[random.nextInt(activeColors.length)],
+            size: random.nextDouble() * (widget.maxSize - widget.minSize) + widget.minSize,
+            speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) + widget.minSpeed,
+            startDelay: random.nextDouble() * widget.maxStartDelay,
+            startX: random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
+            swayAmount: random.nextDouble() * (widget.maxSwayAmount - widget.minSwayAmount) + widget.minSwayAmount,
+          ),
+        );
+      }
     }
   }
 
@@ -132,6 +290,7 @@ class _MultipleBalloonsState extends State<MultipleBalloons> {
             children: balloons.map((config) {
               return FallingBalloon(
                 color: config.color,
+                gradient: config.gradient,
                 size: config.size,
                 speed: config.speed,
                 startDelay: config.startDelay,
@@ -148,10 +307,10 @@ class _MultipleBalloonsState extends State<MultipleBalloons> {
                 constraints: effectiveConstraints,
                 onComplete: widget.enableRespawn
                     ? () {
-                        setState(() {
-                          config.startDelay = 0;
-                        });
-                      }
+                  setState(() {
+                    config.startDelay = 0;
+                  });
+                }
                     : null,
               );
             }).toList(),
@@ -163,7 +322,8 @@ class _MultipleBalloonsState extends State<MultipleBalloons> {
 }
 
 class FallingBalloon extends StatefulWidget {
-  final Color color;
+  final Color? color;
+  final Gradient? gradient;
   final double size;
   final double speed;
   final double startDelay;
@@ -182,7 +342,8 @@ class FallingBalloon extends StatefulWidget {
 
   const FallingBalloon({
     Key? key,
-    required this.color,
+    this.color,
+    this.gradient,
     required this.size,
     required this.speed,
     required this.startDelay,
@@ -198,7 +359,8 @@ class FallingBalloon extends StatefulWidget {
     required this.constraints,
     this.opacity,
     this.onComplete,
-  }) : super(key: key);
+  }) : assert(color != null || gradient != null, 'Either color or gradient must be provided'),
+        super(key: key);
 
   @override
   State<FallingBalloon> createState() => _FallingBalloonState();
@@ -216,16 +378,16 @@ class _FallingBalloonState extends State<FallingBalloon>
     _controller = AnimationController(
       duration: Duration(
           milliseconds:
-              (widget.animationDuration.inMilliseconds / widget.speed).round()),
+          (widget.animationDuration.inMilliseconds / widget.speed).round()),
       vsync: this,
     );
 
     Future.delayed(Duration(milliseconds: (widget.startDelay * 1000).round()),
-        () {
-      if (mounted) {
-        _initializeAnimations();
-      }
-    });
+            () {
+          if (mounted) {
+            _initializeAnimations();
+          }
+        });
   }
 
   void _initializeAnimations() {
@@ -291,6 +453,7 @@ class _FallingBalloonState extends State<FallingBalloon>
             size: Size(widget.size, widget.size * 1.2),
             painter: BalloonPainter(
               color: widget.color,
+              gradient: widget.gradient,
               withString: widget.showString,
               stringLength: widget.stringLength,
               stringColor: widget.stringColor,
@@ -306,7 +469,8 @@ class _FallingBalloonState extends State<FallingBalloon>
 }
 
 class BalloonPainter extends CustomPainter {
-  final Color color;
+  final Color? color;
+  final Gradient? gradient;
   final bool withString;
   final double stringLength;
   final Color stringColor;
@@ -315,20 +479,36 @@ class BalloonPainter extends CustomPainter {
   final double? opacity;
 
   BalloonPainter({
-    required this.color,
+    this.color,
+    this.gradient,
     required this.withString,
     required this.stringLength,
     required this.stringColor,
     required this.stringWidth,
     required this.shape,
     this.opacity,
-  });
+  }) : assert(color != null || gradient != null, 'Either color or gradient must be provided');
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint balloonPaint = Paint()
-      ..color = opacity != null ? color.withOpacity(opacity!) : color
       ..style = PaintingStyle.fill;
+
+    if (gradient != null) {
+      final Rect rect = Rect.fromLTWH(0, 0, size.width, size.width * 1.2);
+      balloonPaint.shader = gradient!.createShader(rect);
+
+      if (opacity != null) {
+        // For gradients with opacity, we'll need to use a saveLayer approach
+        final Paint opacityPaint = Paint()
+          ..color = Colors.white.withOpacity(opacity!)
+          ..blendMode = BlendMode.modulate;
+
+        canvas.saveLayer(rect, opacityPaint);
+      }
+    } else if (color != null) {
+      balloonPaint.color = opacity != null ? color!.withOpacity(opacity!) : color!;
+    }
 
     final Paint stringPaint = Paint()
       ..color = stringColor
@@ -353,6 +533,11 @@ class BalloonPainter extends CustomPainter {
     }
 
     canvas.drawPath(balloonPath, balloonPaint);
+
+    if (gradient != null && opacity != null) {
+      // Restore if we used saveLayer for gradient opacity
+      canvas.restore();
+    }
 
     if (withString) {
       final stringPath = Path()
@@ -415,10 +600,11 @@ class BalloonPainter extends CustomPainter {
   @override
   bool shouldRepaint(BalloonPainter oldDelegate) =>
       color != oldDelegate.color ||
-      withString != oldDelegate.withString ||
-      stringLength != oldDelegate.stringLength ||
-      stringColor != oldDelegate.stringColor ||
-      stringWidth != oldDelegate.stringWidth ||
-      shape != oldDelegate.shape ||
-      opacity != oldDelegate.opacity;
+          gradient != oldDelegate.gradient ||
+          withString != oldDelegate.withString ||
+          stringLength != oldDelegate.stringLength ||
+          stringColor != oldDelegate.stringColor ||
+          stringWidth != oldDelegate.stringWidth ||
+          shape != oldDelegate.shape ||
+          opacity != oldDelegate.opacity;
 }
