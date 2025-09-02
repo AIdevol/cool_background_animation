@@ -42,6 +42,9 @@ class MatrixRainAnimation extends StatefulWidget {
   /// Callback when animation stops
   final VoidCallback? onStop;
 
+  /// Child widget to display on top of the matrix animation
+  final Widget? child;
+
   const MatrixRainAnimation({
     Key? key,
     this.textColor = const Color(0xFF00FF00),
@@ -57,6 +60,7 @@ class MatrixRainAnimation extends StatefulWidget {
     this.autoStart = true,
     this.onStart,
     this.onStop,
+    this.child,
   }) : super(key: key);
 
   @override
@@ -101,7 +105,7 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
     final characters = widget.customCharacters ?? defaultCharacters;
     return List.generate(
       widget.charactersPerColumn,
-      (_) => characters[random.nextInt(characters.length)],
+          (_) => characters[random.nextInt(characters.length)],
     );
   }
 
@@ -112,19 +116,19 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
     timer?.cancel();
     timer =
         Timer.periodic(Duration(milliseconds: widget.updateInterval), (timer) {
-      if (!mounted) return;
+          if (!mounted) return;
 
-      setState(() {
-        final height = MediaQuery.of(context).size.height;
-        for (var column in columns) {
-          column.y += column.speed;
-          if (column.y > height) {
-            column.y = random.nextDouble() * -500;
-            column.characters = generateRandomCharacters();
-          }
-        }
-      });
-    });
+          setState(() {
+            final height = MediaQuery.of(context).size.height;
+            for (var column in columns) {
+              column.y += column.speed;
+              if (column.y > height) {
+                column.y = random.nextDouble() * -500;
+                column.characters = generateRandomCharacters();
+              }
+            }
+          });
+        });
 
     setState(() => isRunning = true);
     widget.onStart?.call();
@@ -154,14 +158,24 @@ class _MatrixRainAnimationState extends State<MatrixRainAnimation> {
   Widget build(BuildContext context) {
     return Container(
       color: widget.backgroundColor,
-      child: CustomPaint(
-        painter: MatrixRainPainter(
-          columns: columns,
-          textColor: widget.textColor,
-          fontSize: widget.fontSize,
-          fadeRatio: widget.fadeRatio,
-        ),
-        size: Size.infinite,
+      child: Stack(
+        children: [
+          // Matrix rain animation layer
+          CustomPaint(
+            painter: MatrixRainPainter(
+              columns: columns,
+              textColor: widget.textColor,
+              fontSize: widget.fontSize,
+              fadeRatio: widget.fadeRatio,
+            ),
+            size: Size.infinite,
+          ),
+          // Child widget layer on top
+          if (widget.child != null)
+            Positioned.fill(
+              child: widget.child!,
+            ),
+        ],
       ),
     );
   }

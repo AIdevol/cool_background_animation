@@ -62,6 +62,8 @@ class InfiniteSpiralMotionAnimation extends StatefulWidget {
   final bool enablePulsingBorder;
   final double pulsingBorderWidth;
   final Duration pulsingBorderDuration;
+  // Child widget parameter
+  final Widget? child;
 
   const InfiniteSpiralMotionAnimation({
     Key? key,
@@ -119,6 +121,7 @@ class InfiniteSpiralMotionAnimation extends StatefulWidget {
     this.enablePulsingBorder = false,
     this.pulsingBorderWidth = 2.0,
     this.pulsingBorderDuration = const Duration(seconds: 2),
+    this.child,
   })  : assert(colors.length >= 1),
         assert(minScale < maxScale),
         assert(startOpacity >= 0 && startOpacity <= 1),
@@ -148,22 +151,22 @@ class _InfiniteSpiralMotionAnimationState
 
   bool get _enableForward =>
       widget.direction == AnimationDirection.forward ||
-      widget.direction == AnimationDirection.all;
+          widget.direction == AnimationDirection.all;
   bool get _enableSpiral =>
       widget.direction == AnimationDirection.spiral ||
-      widget.direction == AnimationDirection.all;
+          widget.direction == AnimationDirection.all;
   bool get _enableWave =>
       widget.direction == AnimationDirection.wave ||
-      widget.direction == AnimationDirection.all;
+          widget.direction == AnimationDirection.all;
   bool get _enablePulse =>
       widget.direction == AnimationDirection.pulse ||
-      widget.direction == AnimationDirection.all;
+          widget.direction == AnimationDirection.all;
   bool get _enableBounce =>
       widget.direction == AnimationDirection.bounce ||
-      widget.direction == AnimationDirection.all;
+          widget.direction == AnimationDirection.all;
   bool get _enableZigzag =>
       widget.direction == AnimationDirection.zigzag ||
-      widget.direction == AnimationDirection.all;
+          widget.direction == AnimationDirection.all;
 
   @override
   void initState() {
@@ -289,82 +292,91 @@ class _InfiniteSpiralMotionAnimationState
         width: widget.size,
         height: widget.size,
         alignment: Alignment.center,
-        child: AnimatedBuilder(
-          animation: Listenable.merge([
-            _rotationController,
-            _motionAnimation,
-            if (_enablePulse) _pulseController,
-            if (_enableWave) _waveController,
-            if (widget.enableColorShift) _colorShiftController,
-            if (_enableBounce) _bounceController,
-            if (_enableZigzag) _zigzagController,
-            if (widget.enableShimmer) _shimmerController,
-            if (widget.enablePulsingBorder) _pulsingBorderController,
-          ]),
-          builder: (context, child) {
-            return Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001) // perspective
-                ..rotateX(widget.enable3DEffect ? widget.rotationX : 0.0)
-                ..rotateY(widget.enable3DEffect ? widget.rotationY : 0.0),
-              alignment: Alignment.center,
-              child: CustomPaint(
-                size: Size(widget.size, widget.size),
-                painter: _EnhancedSpiralPainter(
-                  rotationProgress: _rotationController.value,
-                  motionProgress: _motionAnimation.value,
-                  pulseProgress: _enablePulse ? _pulseController.value : 0,
-                  waveProgress: _enableWave ? _waveController.value : 0,
-                  colorShiftProgress:
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Spiral animation background
+            AnimatedBuilder(
+              animation: Listenable.merge([
+                _rotationController,
+                _motionAnimation,
+                if (_enablePulse) _pulseController,
+                if (_enableWave) _waveController,
+                if (widget.enableColorShift) _colorShiftController,
+                if (_enableBounce) _bounceController,
+                if (_enableZigzag) _zigzagController,
+                if (widget.enableShimmer) _shimmerController,
+                if (widget.enablePulsingBorder) _pulsingBorderController,
+              ]),
+              builder: (context, child) {
+                return Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001) // perspective
+                    ..rotateX(widget.enable3DEffect ? widget.rotationX : 0.0)
+                    ..rotateY(widget.enable3DEffect ? widget.rotationY : 0.0),
+                  alignment: Alignment.center,
+                  child: CustomPaint(
+                    size: Size(widget.size, widget.size),
+                    painter: _EnhancedSpiralPainter(
+                      rotationProgress: _rotationController.value,
+                      motionProgress: _motionAnimation.value,
+                      pulseProgress: _enablePulse ? _pulseController.value : 0,
+                      waveProgress: _enableWave ? _waveController.value : 0,
+                      colorShiftProgress:
                       widget.enableColorShift ? _colorShiftController.value : 0,
-                  bounceProgress: _enableBounce ? _bounceController.value : 0,
-                  zigzagProgress: _enableZigzag ? _zigzagController.value : 0,
-                  shimmerProgress:
+                      bounceProgress: _enableBounce ? _bounceController.value : 0,
+                      zigzagProgress: _enableZigzag ? _zigzagController.value : 0,
+                      shimmerProgress:
                       widget.enableShimmer ? _shimmerController.value : 0,
-                  pulsingBorderProgress: widget.enablePulsingBorder
-                      ? _pulsingBorderController.value
-                      : 0,
-                  colors: widget.colors,
-                  numberOfRings: widget.numberOfRings,
-                  minScale: widget.minScale,
-                  maxScale: widget.maxScale,
-                  startOpacity: widget.startOpacity,
-                  endOpacity: widget.endOpacity,
-                  ringSpacing: widget.ringSpacing,
-                  depthEffect: widget.depthEffect,
-                  enableForward: _enableForward,
-                  forwardSpeed: widget.forwardSpeed,
-                  tunnelDepth: widget.tunnelDepth,
-                  perspectiveEffect: widget.perspectiveEffect,
-                  glowIntensity: widget.glowIntensity,
-                  enableSpiral: _enableSpiral,
-                  spiralIntensity: widget.spiralIntensity,
-                  enableWave: _enableWave,
-                  waveAmplitude: widget.waveAmplitude,
-                  pulseIntensity: widget.pulseIntensity,
-                  enableBlur: widget.enableBlur,
-                  blurRadius: widget.blurRadius,
-                  enableDistortion: widget.enableDistortion,
-                  distortionIntensity: widget.distortionIntensity,
-                  colorBlendMode: widget.colorBlendMode,
-                  rainbowSpeed: widget.rainbowSpeed,
-                  bounceHeight: widget.bounceHeight,
-                  zigzagAmplitude: widget.zigzagAmplitude,
-                  zigzagFrequency: widget.zigzagFrequency,
-                  enableParticles: widget.enableParticles,
-                  particles: _particles,
-                  particleSize: widget.particleSize,
-                  enableGradientBorder: widget.enableGradientBorder,
-                  borderWidth: widget.borderWidth,
-                  enableShadow: widget.enableShadow,
-                  shadowIntensity: widget.shadowIntensity,
-                  enablePulsingBorder: widget.enablePulsingBorder,
-                  pulsingBorderWidth: widget.pulsingBorderWidth,
-                  shimmerWidth: widget.shimmerWidth,
-                ),
-              ),
-            );
-          },
+                      pulsingBorderProgress: widget.enablePulsingBorder
+                          ? _pulsingBorderController.value
+                          : 0,
+                      colors: widget.colors,
+                      numberOfRings: widget.numberOfRings,
+                      minScale: widget.minScale,
+                      maxScale: widget.maxScale,
+                      startOpacity: widget.startOpacity,
+                      endOpacity: widget.endOpacity,
+                      ringSpacing: widget.ringSpacing,
+                      depthEffect: widget.depthEffect,
+                      enableForward: _enableForward,
+                      forwardSpeed: widget.forwardSpeed,
+                      tunnelDepth: widget.tunnelDepth,
+                      perspectiveEffect: widget.perspectiveEffect,
+                      glowIntensity: widget.glowIntensity,
+                      enableSpiral: _enableSpiral,
+                      spiralIntensity: widget.spiralIntensity,
+                      enableWave: _enableWave,
+                      waveAmplitude: widget.waveAmplitude,
+                      pulseIntensity: widget.pulseIntensity,
+                      enableBlur: widget.enableBlur,
+                      blurRadius: widget.blurRadius,
+                      enableDistortion: widget.enableDistortion,
+                      distortionIntensity: widget.distortionIntensity,
+                      colorBlendMode: widget.colorBlendMode,
+                      rainbowSpeed: widget.rainbowSpeed,
+                      bounceHeight: widget.bounceHeight,
+                      zigzagAmplitude: widget.zigzagAmplitude,
+                      zigzagFrequency: widget.zigzagFrequency,
+                      enableParticles: widget.enableParticles,
+                      particles: _particles,
+                      particleSize: widget.particleSize,
+                      enableGradientBorder: widget.enableGradientBorder,
+                      borderWidth: widget.borderWidth,
+                      enableShadow: widget.enableShadow,
+                      shadowIntensity: widget.shadowIntensity,
+                      enablePulsingBorder: widget.enablePulsingBorder,
+                      pulsingBorderWidth: widget.pulsingBorderWidth,
+                      shimmerWidth: widget.shimmerWidth,
+                    ),
+                  ),
+                );
+              },
+            ),
+            // Child widget overlay
+            if (widget.child != null)
+              widget.child!,
+          ],
         ),
       ),
     );
@@ -516,7 +528,7 @@ class _EnhancedSpiralPainter extends CustomPainter {
 
       // Calculate perspective and scale
       double perspectiveScale =
-          enableForward ? 1 / (1 + (zProgress * tunnelDepth)) : 1.0;
+      enableForward ? 1 / (1 + (zProgress * tunnelDepth)) : 1.0;
 
       final motionScale = minScale + (maxScale - minScale) * motionProgress;
       final pulseScale = pulseProgress * pulseIntensity;
@@ -534,7 +546,7 @@ class _EnhancedSpiralPainter extends CustomPainter {
       // Add wave effect
       if (enableWave) {
         final wave =
-            math.sin(progress * math.pi * 2 + waveProgress * math.pi * 2);
+        math.sin(progress * math.pi * 2 + waveProgress * math.pi * 2);
         radius += wave * waveAmplitude;
       }
 
@@ -548,7 +560,7 @@ class _EnhancedSpiralPainter extends CustomPainter {
       // Add distortion
       if (enableDistortion) {
         final distortion =
-            math.sin(progress * math.pi * 4 + rotationProgress * math.pi * 2);
+        math.sin(progress * math.pi * 4 + rotationProgress * math.pi * 2);
         radius += distortion * distortionIntensity * maxRadius;
       }
 
@@ -572,7 +584,7 @@ class _EnhancedSpiralPainter extends CustomPainter {
           final pulseColor = colors[i % colors.length];
           final pulseAmount = (math.sin(pulseProgress * math.pi * 2) + 1) / 2;
           ringColor =
-              Color.lerp(pulseColor.withOpacity(0.5), pulseColor, pulseAmount)!;
+          Color.lerp(pulseColor.withOpacity(0.5), pulseColor, pulseAmount)!;
           break;
         case ColorBlendMode.random:
           ringColor = colors[math.Random().nextInt(colors.length)];
@@ -581,7 +593,7 @@ class _EnhancedSpiralPainter extends CustomPainter {
           final colorIndex = i % colors.length;
           final nextColorIndex = (i + 1) % colors.length;
           ringColor =
-              Color.lerp(colors[colorIndex], colors[nextColorIndex], progress)!;
+          Color.lerp(colors[colorIndex], colors[nextColorIndex], progress)!;
           break;
         default:
           final colorIndex = i % colors.length;

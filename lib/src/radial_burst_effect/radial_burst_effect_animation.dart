@@ -67,6 +67,9 @@ class RadialBurst extends StatefulWidget {
   /// The background color of the widget.
   final Color? backgroundColor;
 
+  /// Child widget to display on top of the radial burst animation
+  final Widget? child;
+
   /// Creates a RadialBurst widget.
   const RadialBurst({
     Key? key,
@@ -101,6 +104,7 @@ class RadialBurst extends StatefulWidget {
     this.varyRayLengths = true,
     this.rotate = true,
     this.backgroundColor,
+    this.child,
   })  : assert(numberOfRays > 0, 'Number of rays must be greater than 0'),
         assert(rayLengthFactor > 0 && rayLengthFactor <= 1.0,
         'Ray length factor must be between 0 and 1.0'),
@@ -236,29 +240,39 @@ class RadialBurstState extends State<RadialBurst>
       color: widget.backgroundColor,
       width: widget.size?.width,
       height: widget.size?.height,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: RadialBurstPainter(
-              animationValue: widget.clockwise ? _controller.value : 1 - _controller.value,
-              rayColors: widget.rayColors,
-              numberOfRays: widget.numberOfRays,
-              rayLengthFactor: widget.rayLengthFactor,
-              centerGlowOpacity: widget.centerGlowOpacity,
-              centerGlowRadiusFactor: widget.centerGlowRadiusFactor,
-              centerGlowColors: widget.centerGlowColors,
-              centerGlowStops: widget.centerGlowStops,
-              uniformRayColor: widget.uniformRayColor,
-              minRayWidth: widget.minRayWidth,
-              maxRayWidth: widget.maxRayWidth,
-              randomSeed: widget.randomSeed,
-              varyRayLengths: widget.varyRayLengths,
-              rotate: widget.rotate,
+      child: Stack(
+        children: [
+          // Radial burst animation layer
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: RadialBurstPainter(
+                  animationValue: widget.clockwise ? _controller.value : 1 - _controller.value,
+                  rayColors: widget.rayColors,
+                  numberOfRays: widget.numberOfRays,
+                  rayLengthFactor: widget.rayLengthFactor,
+                  centerGlowOpacity: widget.centerGlowOpacity,
+                  centerGlowRadiusFactor: widget.centerGlowRadiusFactor,
+                  centerGlowColors: widget.centerGlowColors,
+                  centerGlowStops: widget.centerGlowStops,
+                  uniformRayColor: widget.uniformRayColor,
+                  minRayWidth: widget.minRayWidth,
+                  maxRayWidth: widget.maxRayWidth,
+                  randomSeed: widget.randomSeed,
+                  varyRayLengths: widget.varyRayLengths,
+                  rotate: widget.rotate,
+                ),
+                size: widget.size ?? MediaQuery.of(context).size,
+              );
+            },
+          ),
+          // Child widget layer on top
+          if (widget.child != null)
+            Positioned.fill(
+              child: widget.child!,
             ),
-            size: widget.size ?? MediaQuery.of(context).size,
-          );
-        },
+        ],
       ),
     );
   }

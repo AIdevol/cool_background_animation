@@ -17,69 +17,54 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const BalloonDemoPage(),
+      home: const SpiralBackgroundDemo(),
     );
   }
 }
 
-class BalloonDemoPage extends StatelessWidget {
-  const BalloonDemoPage({Key? key}) : super(key: key);
+class SpiralBackgroundDemo extends StatelessWidget {
+  const SpiralBackgroundDemo({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BalloonBackgroundWidget(
-        // Option 1: Solid background color
-        backgroundColor: Colors.lightBlue[100],
-
-        // Option 2: Gradient background (comment out backgroundColor if using this)
-        // backgroundGradient: LinearGradient(
-        //   colors: [Colors.blue[100]!, Colors.purple[100]!],
-        //   begin: Alignment.topCenter,
-        //   end: Alignment.bottomCenter,
-        // ),
-
-        balloonCount: 15,
-
-        // Option A: Solid color balloons
-        balloonColors: [
-          Colors.red,
-          Colors.blue,
-          Colors.green,
-          Colors.yellow,
-          Colors.purple,
-        ],
-
-        // Option B: Gradient balloons (comment out balloonColors if using this)
-        // balloonGradients: [
-        //   LinearGradient(colors: [Colors.red, Colors.orange]),
-        //   LinearGradient(colors: [Colors.blue, Colors.purple]),
-        //   LinearGradient(colors: [Colors.green, Colors.yellow]),
-        //   LinearGradient(colors: [Colors.pink, Colors.purple]),
-        // ],
-
-        balloonShape: BalloonShape.heart,
-        minSize: 40,
-        maxSize: 80,
-        minSpeed: 0.8,
-        maxSpeed: 2.0,
-        opacity: 0.8,
-
+      body: StarryBackground(
+        numberOfStars: 150,
+        starConfig: StarConfig(
+          // starColor: Colors.white,
+          // enableTwinkling: true,
+          enableMovement: true,
+        ),
         child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              "Happy Birthday!",
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Under the Stars',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black54,
+                      offset: Offset(2, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
               ),
-            ),
+              SizedBox(height: 16),
+              Text(
+                'Make a wish upon a shooting star...',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),

@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:cool_background_animation/custom_model/starry_background_model.dart';
 import 'package:flutter/material.dart';
-
-import '../../custom_model/starry_background_model.dart';
 
 class StarConfig {
   final double minSize;
@@ -67,6 +66,9 @@ class StarryBackground extends StatefulWidget {
   final int numberOfShootingStars;
   final Duration shootingStarInterval;
 
+  /// Child widget to display on top of the starry background animation
+  final Widget? child;
+
   const StarryBackground({
     Key? key,
     this.numberOfStars = 100,
@@ -79,6 +81,7 @@ class StarryBackground extends StatefulWidget {
     this.enableShootingStars = true,
     this.numberOfShootingStars = 2,
     this.shootingStarInterval = const Duration(seconds: 5),
+    this.child,
   }) : super(key: key);
 
   @override
@@ -108,11 +111,11 @@ class StarryBackgroundState extends State<StarryBackground>
   void _initializeStars() {
     stars = List.generate(
       widget.numberOfStars,
-      (index) => Star(
+          (index) => Star(
         x: random.nextDouble() * 100,
         y: random.nextDouble() * 100,
         size:
-            _randomRange(widget.starConfig.minSize, widget.starConfig.maxSize),
+        _randomRange(widget.starConfig.minSize, widget.starConfig.maxSize),
         baseOpacity: _randomRange(
           widget.starConfig.minOpacity,
           widget.starConfig.maxOpacity,
@@ -144,12 +147,12 @@ class StarryBackgroundState extends State<StarryBackground>
     if (widget.starConfig.enableTwinkling) {
       twinkleControllers = List.generate(
         widget.numberOfStars,
-        (index) => AnimationController(
+            (index) => AnimationController(
           duration: Duration(
             milliseconds: random.nextInt(
-                  widget.starConfig.maxTwinkleDuration.inMilliseconds -
-                      widget.starConfig.minTwinkleDuration.inMilliseconds,
-                ) +
+              widget.starConfig.maxTwinkleDuration.inMilliseconds -
+                  widget.starConfig.minTwinkleDuration.inMilliseconds,
+            ) +
                 widget.starConfig.minTwinkleDuration.inMilliseconds,
           ),
           vsync: this,
@@ -168,7 +171,7 @@ class StarryBackgroundState extends State<StarryBackground>
       for (var controller in twinkleControllers) {
         Future.delayed(
           Duration(milliseconds: random.nextInt(2000)),
-          () => controller.repeat(reverse: true),
+              () => controller.repeat(reverse: true),
         );
       }
     }
@@ -223,15 +226,25 @@ class StarryBackgroundState extends State<StarryBackground>
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(gradient: widget.backgroundGradient),
-      child: CustomPaint(
-        painter: StarPainter(
-          stars: stars,
-          starConfig: widget.starConfig,
-          animations:
+      child: Stack(
+        children: [
+          // Starry background animation layer
+          CustomPaint(
+            painter: StarPainter(
+              stars: stars,
+              starConfig: widget.starConfig,
+              animations:
               widget.starConfig.enableTwinkling ? twinkleAnimations : null,
-          shootingStars: shootingStars,
-        ),
-        size: Size.infinite,
+              shootingStars: shootingStars,
+            ),
+            size: Size.infinite,
+          ),
+          // Child widget layer on top
+          if (widget.child != null)
+            Positioned.fill(
+              child: widget.child!,
+            ),
+        ],
       ),
     );
   }

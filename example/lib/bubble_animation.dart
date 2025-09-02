@@ -1,611 +1,310 @@
+import 'dart:async';
+import 'dart:math';
+import 'package:cool_background_animation/custom_model/starry_background_model.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
-// Balloon shape options
-enum BalloonShape { oval, round, heart, star }
-
-/// A widget that displays a child widget on top of animated balloons background
-class BalloonBackgroundWidget extends StatelessWidget {
-  /// The widget to display on top of the balloon animation
-  final Widget child;
-
-  /// Background color or gradient settings
-  final Color? backgroundColor;
-  final Gradient? backgroundGradient;
-
-  /// Balloon animation configuration
-  final int balloonCount;
-  final List<Color>? balloonColors;
-  final List<Gradient>? balloonGradients;
+class StarConfig {
   final double minSize;
   final double maxSize;
-  final double minSpeed;
-  final double maxSpeed;
-  final double maxStartDelay;
-  final double minSwayAmount;
-  final double maxSwayAmount;
-  final Duration animationDuration;
-  final bool enableRespawn;
-  final bool showStrings;
-  final double stringLength;
-  final Color stringColor;
-  final double stringWidth;
-  final Curve swayingCurve;
-  final BalloonShape balloonShape;
-  final double? opacity;
+  final double minOpacity;
+  final double maxOpacity;
+  final Color starColor;
+  final Duration minTwinkleDuration;
+  final Duration maxTwinkleDuration;
+  final bool enableMovement;
+  final double movementSpeed;
+  final bool enableTwinkling;
 
-  /// Optional overlay color to ensure text readability
-  final Color? overlayColor;
-  final double overlayOpacity;
+  const StarConfig({
+    this.minSize = 1.0,
+    this.maxSize = 3.0,
+    this.minOpacity = 0.3,
+    this.maxOpacity = 0.8,
+    this.starColor = Colors.white,
+    this.minTwinkleDuration = const Duration(milliseconds: 1000),
+    this.maxTwinkleDuration = const Duration(milliseconds: 3000),
+    this.enableMovement = true,
+    this.movementSpeed = 1.0,
+    this.enableTwinkling = true,
+  });
+}
 
-  const BalloonBackgroundWidget({
+class Star {
+  double x;
+  double y;
+  final double size;
+  final double baseOpacity;
+  final double speed;
+  final double angle;
+
+  Star({
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.baseOpacity,
+    required this.speed,
+    required this.angle,
+  });
+
+  void move(Size size, double delta) {
+    x += cos(angle) * speed * delta;
+    y += sin(angle) * speed * delta;
+
+    // Wrap around screen
+    if (x < 0) x = size.width;
+    if (x > size.width) x = 0;
+    if (y < 0) y = size.height;
+    if (y > size.height) y = 0;
+  }
+}
+
+class StarryBackground extends StatefulWidget {
+  final int numberOfStars;
+  final StarConfig starConfig;
+  final Gradient backgroundGradient;
+  final bool enableShootingStars;
+  final int numberOfShootingStars;
+  final Duration shootingStarInterval;
+
+  /// Child widget to display on top of the starry background animation
+  final Widget? child;
+
+  const StarryBackground({
     Key? key,
-    required this.child,
-    this.backgroundColor,
-    this.backgroundGradient,
-    this.balloonCount = 20,
-    this.balloonColors,
-    this.balloonGradients,
-    this.minSize = 40,
-    this.maxSize = 70,
-    this.minSpeed = 0.5,
-    this.maxSpeed = 2.0,
-    this.maxStartDelay = 2.0,
-    this.minSwayAmount = 20,
-    this.maxSwayAmount = 100,
-    this.animationDuration = const Duration(seconds: 5),
-    this.enableRespawn = true,
-    this.showStrings = true,
-    this.stringLength = 1.6,
-    this.stringColor = Colors.grey,
-    this.stringWidth = 1.0,
-    this.swayingCurve = Curves.easeInOut,
-    this.balloonShape = BalloonShape.oval,
-    this.opacity,
-    this.overlayColor,
-    this.overlayOpacity = 0.2,
+    this.numberOfStars = 100,
+    this.starConfig = const StarConfig(),
+    this.backgroundGradient = const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF0B1026), Color(0xFF182052)],
+    ),
+    this.enableShootingStars = true,
+    this.numberOfShootingStars = 2,
+    this.shootingStarInterval = const Duration(seconds: 5),
+    this.child,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Background color or gradient
-        if (backgroundGradient != null)
-          Container(
-            decoration: BoxDecoration(
-              gradient: backgroundGradient,
-            ),
-          )
-        else if (backgroundColor != null)
-          Container(
-            color: backgroundColor,
-          ),
+  StarryBackgroundState createState() => StarryBackgroundState();
+}
 
-        // Balloon animation
-        MultipleBalloons(
-          balloonCount: balloonCount,
-          colors: balloonColors,
-          gradients: balloonGradients,
-          minSize: minSize,
-          maxSize: maxSize,
-          minSpeed: minSpeed,
-          maxSpeed: maxSpeed,
-          maxStartDelay: maxStartDelay,
-          minSwayAmount: minSwayAmount,
-          maxSwayAmount: maxSwayAmount,
-          animationDuration: animationDuration,
-          enableRespawn: enableRespawn,
-          showStrings: showStrings,
-          stringLength: stringLength,
-          stringColor: stringColor,
-          stringWidth: stringWidth,
-          swayingCurve: swayingCurve,
-          balloonShape: balloonShape,
-          opacity: opacity,
+class StarryBackgroundState extends State<StarryBackground>
+    with TickerProviderStateMixin {
+  late List<Star> stars;
+  late List<AnimationController> twinkleControllers;
+  late List<Animation<double>> twinkleAnimations;
+  final Random random = Random();
+  late AnimationController _moveController;
+  List<ShootingStar> shootingStars = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeStars();
+    _initializeAnimations();
+    _initializeMovement();
+    if (widget.enableShootingStars) {
+      _initializeShootingStars();
+    }
+  }
+
+  void _initializeStars() {
+    stars = List.generate(
+      widget.numberOfStars,
+          (index) => Star(
+        x: random.nextDouble() * 100,
+        y: random.nextDouble() * 100,
+        size:
+        _randomRange(widget.starConfig.minSize, widget.starConfig.maxSize),
+        baseOpacity: _randomRange(
+          widget.starConfig.minOpacity,
+          widget.starConfig.maxOpacity,
         ),
-
-        // Optional semi-transparent overlay for better readability of child content
-        if (overlayColor != null)
-          Container(
-            color: overlayColor!.withOpacity(overlayOpacity),
-          ),
-
-        // Main content on top
-        child,
-      ],
+        speed: _randomRange(0.5, 2.0) * widget.starConfig.movementSpeed,
+        angle: random.nextDouble() * 2 * pi,
+      ),
     );
   }
-}
 
-class MultipleBalloons extends StatefulWidget {
-  final int balloonCount;
-  final List<Color>? colors;
-  final List<Gradient>? gradients;
-  final double minSize;
-  final double maxSize;
-  final double minSpeed;
-  final double maxSpeed;
-  final double maxStartDelay;
-  final double minSwayAmount;
-  final double maxSwayAmount;
-  final Duration animationDuration;
-  final bool enableRespawn;
-  final bool showStrings;
-  final double stringLength;
-  final Color stringColor;
-  final double stringWidth;
-  final BoxConstraints? areaConstraints;
-  final Curve swayingCurve;
-  final BalloonShape balloonShape;
-  final double? opacity;
-
-  const MultipleBalloons({
-    Key? key,
-    this.balloonCount = 20,
-    this.colors,
-    this.gradients,
-    this.minSize = 40,
-    this.maxSize = 70,
-    this.minSpeed = 0.5,
-    this.maxSpeed = 2.0,
-    this.maxStartDelay = 2.0,
-    this.minSwayAmount = 20,
-    this.maxSwayAmount = 100,
-    this.animationDuration = const Duration(seconds: 5),
-    this.enableRespawn = true,
-    this.showStrings = true,
-    this.stringLength = 1.6,
-    this.stringColor = Colors.grey,
-    this.stringWidth = 1.0,
-    this.areaConstraints,
-    this.swayingCurve = Curves.easeInOut,
-    this.balloonShape = BalloonShape.oval,
-    this.opacity,
-  }) : super(key: key);
-
-  @override
-  State<MultipleBalloons> createState() => _MultipleBalloonsState();
-}
-
-class BalloonConfig {
-  final Color? color;
-  final Gradient? gradient;
-  final double size;
-  final double speed;
-  double startDelay;
-  final double startX;
-  final double swayAmount;
-
-  BalloonConfig({
-    this.color,
-    this.gradient,
-    required this.size,
-    required this.speed,
-    required this.startDelay,
-    required this.startX,
-    required this.swayAmount,
-  }) : assert(color != null || gradient != null, 'Either color or gradient must be provided');
-}
-
-class _MultipleBalloonsState extends State<MultipleBalloons> {
-  final List<BalloonConfig> balloons = [];
-  final math.Random random = math.Random();
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeBalloons();
-  }
-
-  void _initializeBalloons() {
-    final defaultColors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.yellow,
-      Colors.purple,
-      Colors.orange,
-      Colors.pink,
-    ];
-
-    final defaultGradients = [
-      LinearGradient(
-        colors: [Colors.red, Colors.orange],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      LinearGradient(
-        colors: [Colors.blue, Colors.purple],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      LinearGradient(
-        colors: [Colors.green, Colors.yellow],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      LinearGradient(
-        colors: [Colors.pink, Colors.purple],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      LinearGradient(
-        colors: [Colors.orange, Colors.yellow],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    ];
-
-    final activeColors = widget.colors ?? defaultColors;
-    final activeGradients = widget.gradients ?? defaultGradients;
-    final useGradients = widget.gradients != null;
-
-    balloons.clear();
-
-    for (int i = 0; i < widget.balloonCount; i++) {
-      if (useGradients) {
-        balloons.add(
-          BalloonConfig(
-            gradient: activeGradients[random.nextInt(activeGradients.length)],
-            size: random.nextDouble() * (widget.maxSize - widget.minSize) + widget.minSize,
-            speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) + widget.minSpeed,
-            startDelay: random.nextDouble() * widget.maxStartDelay,
-            startX: random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
-            swayAmount: random.nextDouble() * (widget.maxSwayAmount - widget.minSwayAmount) + widget.minSwayAmount,
-          ),
-        );
-      } else {
-        balloons.add(
-          BalloonConfig(
-            color: activeColors[random.nextInt(activeColors.length)],
-            size: random.nextDouble() * (widget.maxSize - widget.minSize) + widget.minSize,
-            speed: random.nextDouble() * (widget.maxSpeed - widget.minSpeed) + widget.minSpeed,
-            startDelay: random.nextDouble() * widget.maxStartDelay,
-            startX: random.nextDouble() * (widget.areaConstraints?.maxWidth ?? 300),
-            swayAmount: random.nextDouble() * (widget.maxSwayAmount - widget.minSwayAmount) + widget.minSwayAmount,
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  void didUpdateWidget(MultipleBalloons oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.balloonCount != oldWidget.balloonCount) {
-      _initializeBalloons();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final effectiveConstraints = widget.areaConstraints ?? constraints;
-        return SizedBox(
-          width: effectiveConstraints.maxWidth,
-          height: effectiveConstraints.maxHeight,
-          child: Stack(
-            children: balloons.map((config) {
-              return FallingBalloon(
-                color: config.color,
-                gradient: config.gradient,
-                size: config.size,
-                speed: config.speed,
-                startDelay: config.startDelay,
-                startX: config.startX,
-                swayAmount: config.swayAmount,
-                animationDuration: widget.animationDuration,
-                showString: widget.showStrings,
-                stringLength: widget.stringLength,
-                stringColor: widget.stringColor,
-                stringWidth: widget.stringWidth,
-                swayingCurve: widget.swayingCurve,
-                balloonShape: widget.balloonShape,
-                opacity: widget.opacity,
-                constraints: effectiveConstraints,
-                onComplete: widget.enableRespawn
-                    ? () {
-                  setState(() {
-                    config.startDelay = 0;
-                  });
-                }
-                    : null,
-              );
-            }).toList(),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class FallingBalloon extends StatefulWidget {
-  final Color? color;
-  final Gradient? gradient;
-  final double size;
-  final double speed;
-  final double startDelay;
-  final double startX;
-  final double swayAmount;
-  final Duration animationDuration;
-  final bool showString;
-  final double stringLength;
-  final Color stringColor;
-  final double stringWidth;
-  final Curve swayingCurve;
-  final BalloonShape balloonShape;
-  final double? opacity;
-  final BoxConstraints constraints;
-  final VoidCallback? onComplete;
-
-  const FallingBalloon({
-    Key? key,
-    this.color,
-    this.gradient,
-    required this.size,
-    required this.speed,
-    required this.startDelay,
-    required this.startX,
-    required this.swayAmount,
-    required this.animationDuration,
-    required this.showString,
-    required this.stringLength,
-    required this.stringColor,
-    required this.stringWidth,
-    required this.swayingCurve,
-    required this.balloonShape,
-    required this.constraints,
-    this.opacity,
-    this.onComplete,
-  }) : assert(color != null || gradient != null, 'Either color or gradient must be provided'),
-        super(key: key);
-
-  @override
-  State<FallingBalloon> createState() => _FallingBalloonState();
-}
-
-class _FallingBalloonState extends State<FallingBalloon>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  Animation<double>? _positionY;
-  Animation<double>? _positionX;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: Duration(
-          milliseconds:
-          (widget.animationDuration.inMilliseconds / widget.speed).round()),
+  void _initializeMovement() {
+    _moveController = AnimationController(
       vsync: this,
-    );
+      duration: const Duration(seconds: 1),
+    )..repeat();
 
-    Future.delayed(Duration(milliseconds: (widget.startDelay * 1000).round()),
-            () {
-          if (mounted) {
-            _initializeAnimations();
+    _moveController.addListener(() {
+      if (widget.starConfig.enableMovement) {
+        setState(() {
+          for (var star in stars) {
+            star.move(context.size ?? const Size(100, 100), 0.016); // 60 FPS
           }
         });
+      }
+    });
   }
 
   void _initializeAnimations() {
-    _positionY = Tween<double>(
-      begin: -widget.size,
-      end: widget.constraints.maxHeight,
-    ).animate(_controller);
+    if (widget.starConfig.enableTwinkling) {
+      twinkleControllers = List.generate(
+        widget.numberOfStars,
+            (index) => AnimationController(
+          duration: Duration(
+            milliseconds: random.nextInt(
+              widget.starConfig.maxTwinkleDuration.inMilliseconds -
+                  widget.starConfig.minTwinkleDuration.inMilliseconds,
+            ) +
+                widget.starConfig.minTwinkleDuration.inMilliseconds,
+          ),
+          vsync: this,
+        ),
+      );
 
-    _positionX = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: widget.startX,
-          end: widget.startX + widget.swayAmount,
-        ).chain(CurveTween(curve: widget.swayingCurve)),
-        weight: 1.0,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: widget.startX + widget.swayAmount,
-          end: widget.startX - widget.swayAmount,
-        ).chain(CurveTween(curve: widget.swayingCurve)),
-        weight: 1.0,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: widget.startX - widget.swayAmount,
-          end: widget.startX,
-        ).chain(CurveTween(curve: widget.swayingCurve)),
-        weight: 1.0,
-      ),
-    ]).animate(_controller);
+      twinkleAnimations = twinkleControllers.map((controller) {
+        return Tween<double>(begin: 0.3, end: 1.0).animate(
+          CurvedAnimation(
+            parent: controller,
+            curve: Curves.easeInOut,
+          ),
+        );
+      }).toList();
 
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        widget.onComplete?.call();
-        _controller.reset();
-        _controller.forward();
+      for (var controller in twinkleControllers) {
+        Future.delayed(
+          Duration(milliseconds: random.nextInt(2000)),
+              () => controller.repeat(reverse: true),
+        );
+      }
+    }
+  }
+
+  void _initializeShootingStars() {
+    Timer.periodic(widget.shootingStarInterval, (timer) {
+      if (mounted) {
+        _addShootingStar();
+      } else {
+        timer.cancel();
       }
     });
+  }
 
-    _controller.forward();
+  void _addShootingStar() {
+    setState(() {
+      final star = ShootingStar(
+        startX: random.nextDouble() * (context.size?.width ?? 100),
+        startY: random.nextDouble() * (context.size?.height ?? 100),
+        angle: -pi / 4 + (random.nextDouble() - 0.5) * pi / 2,
+        speed: _randomRange(100, 200),
+      );
+      shootingStars.add(star);
+
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            shootingStars.remove(star);
+          });
+        }
+      });
+    });
+  }
+
+  double _randomRange(double min, double max) {
+    return min + random.nextDouble() * (max - min);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _moveController.dispose();
+    if (widget.starConfig.enableTwinkling) {
+      for (var controller in twinkleControllers) {
+        controller.dispose();
+      }
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_positionX == null || _positionY == null) {
-      return const SizedBox.shrink();
-    }
-
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Positioned(
-          left: _positionX!.value,
-          top: _positionY!.value,
-          child: CustomPaint(
-            size: Size(widget.size, widget.size * 1.2),
-            painter: BalloonPainter(
-              color: widget.color,
-              gradient: widget.gradient,
-              withString: widget.showString,
-              stringLength: widget.stringLength,
-              stringColor: widget.stringColor,
-              stringWidth: widget.stringWidth,
-              shape: widget.balloonShape,
-              opacity: widget.opacity,
+    return Container(
+      decoration: BoxDecoration(gradient: widget.backgroundGradient),
+      child: Stack(
+        children: [
+          // Starry background animation layer
+          CustomPaint(
+            painter: StarPainter(
+              stars: stars,
+              starConfig: widget.starConfig,
+              animations:
+              widget.starConfig.enableTwinkling ? twinkleAnimations : null,
+              shootingStars: shootingStars,
             ),
+            size: Size.infinite,
           ),
-        );
-      },
+          // Child widget layer on top
+          if (widget.child != null)
+            Positioned.fill(
+              child: widget.child!,
+            ),
+        ],
+      ),
     );
   }
 }
 
-class BalloonPainter extends CustomPainter {
-  final Color? color;
-  final Gradient? gradient;
-  final bool withString;
-  final double stringLength;
-  final Color stringColor;
-  final double stringWidth;
-  final BalloonShape shape;
-  final double? opacity;
+class StarPainter extends CustomPainter {
+  final List<Star> stars;
+  final StarConfig starConfig;
+  final List<Animation<double>>? animations;
+  final List<ShootingStar> shootingStars;
 
-  BalloonPainter({
-    this.color,
-    this.gradient,
-    required this.withString,
-    required this.stringLength,
-    required this.stringColor,
-    required this.stringWidth,
-    required this.shape,
-    this.opacity,
-  }) : assert(color != null || gradient != null, 'Either color or gradient must be provided');
+  StarPainter({
+    required this.stars,
+    required this.starConfig,
+    this.animations,
+    required this.shootingStars,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint balloonPaint = Paint()
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..color = starConfig.starColor;
 
-    if (gradient != null) {
-      final Rect rect = Rect.fromLTWH(0, 0, size.width, size.width * 1.2);
-      balloonPaint.shader = gradient!.createShader(rect);
+    // Draw regular stars
+    for (var i = 0; i < stars.length; i++) {
+      final star = stars[i];
+      final opacity = animations != null
+          ? star.baseOpacity * animations![i].value
+          : star.baseOpacity;
 
-      if (opacity != null) {
-        // For gradients with opacity, we'll need to use a saveLayer approach
-        final Paint opacityPaint = Paint()
-          ..color = Colors.white.withOpacity(opacity!)
-          ..blendMode = BlendMode.modulate;
-
-        canvas.saveLayer(rect, opacityPaint);
-      }
-    } else if (color != null) {
-      balloonPaint.color = opacity != null ? color!.withOpacity(opacity!) : color!;
-    }
-
-    final Paint stringPaint = Paint()
-      ..color = stringColor
-      ..strokeWidth = stringWidth
-      ..style = PaintingStyle.stroke;
-
-    final balloonPath = Path();
-
-    switch (shape) {
-      case BalloonShape.oval:
-        balloonPath.addOval(Rect.fromLTWH(0, 0, size.width, size.width * 1.2));
-        break;
-      case BalloonShape.round:
-        balloonPath.addOval(Rect.fromLTWH(0, 0, size.width, size.width));
-        break;
-      case BalloonShape.heart:
-        _drawHeart(balloonPath, size);
-        break;
-      case BalloonShape.star:
-        _drawStar(balloonPath, size);
-        break;
-    }
-
-    canvas.drawPath(balloonPath, balloonPaint);
-
-    if (gradient != null && opacity != null) {
-      // Restore if we used saveLayer for gradient opacity
-      canvas.restore();
-    }
-
-    if (withString) {
-      final stringPath = Path()
-        ..moveTo(size.width / 2, size.width * 1.2)
-        ..lineTo(size.width / 2, size.width * stringLength);
-      canvas.drawPath(stringPath, stringPaint);
-    }
-  }
-
-  void _drawHeart(Path path, Size size) {
-    final double width = size.width;
-    final double height = size.width * 1.2;
-
-    path.moveTo(width / 2, height * 0.3);
-    path.cubicTo(
-      width * 0.2,
-      height * 0.1,
-      -width * 0.25,
-      height * 0.5,
-      width / 2,
-      height * 0.8,
-    );
-    path.cubicTo(
-      width * 1.25,
-      height * 0.5,
-      width * 0.8,
-      height * 0.1,
-      width / 2,
-      height * 0.3,
-    );
-  }
-
-  void _drawStar(Path path, Size size) {
-    final double centerX = size.width / 2;
-    final double centerY = size.width / 2;
-    final double radius = size.width / 2;
-
-    for (int i = 0; i < 5; i++) {
-      double angle = -math.pi / 2 + 2 * math.pi * i / 5;
-      if (i == 0) {
-        path.moveTo(
-          centerX + radius * math.cos(angle),
-          centerY + radius * math.sin(angle),
-        );
-      } else {
-        path.lineTo(
-          centerX + radius * math.cos(angle),
-          centerY + radius * math.sin(angle),
-        );
-      }
-      angle += math.pi / 5;
-      path.lineTo(
-        centerX + radius * 0.4 * math.cos(angle),
-        centerY + radius * 0.4 * math.sin(angle),
+      paint.color = starConfig.starColor.withOpacity(opacity);
+      canvas.drawCircle(
+        Offset(star.x, star.y),
+        star.size,
+        paint,
       );
     }
-    path.close();
+
+    // Draw shooting stars
+    if (shootingStars.isNotEmpty) {
+      final shootingStarPaint = Paint()
+        ..color = starConfig.starColor
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke;
+
+      for (var shootingStar in shootingStars) {
+        final pos = shootingStar.getCurrentPosition();
+        final trail = Path()
+          ..moveTo(pos.dx, pos.dy)
+          ..lineTo(
+            pos.dx - cos(shootingStar.angle) * 20,
+            pos.dy - sin(shootingStar.angle) * 20,
+          );
+
+        canvas.drawPath(trail, shootingStarPaint);
+        shootingStar.currentDistance += shootingStar.speed * 0.016;
+      }
+    }
   }
 
   @override
-  bool shouldRepaint(BalloonPainter oldDelegate) =>
-      color != oldDelegate.color ||
-          gradient != oldDelegate.gradient ||
-          withString != oldDelegate.withString ||
-          stringLength != oldDelegate.stringLength ||
-          stringColor != oldDelegate.stringColor ||
-          stringWidth != oldDelegate.stringWidth ||
-          shape != oldDelegate.shape ||
-          opacity != oldDelegate.opacity;
+  bool shouldRepaint(StarPainter oldDelegate) => true;
 }

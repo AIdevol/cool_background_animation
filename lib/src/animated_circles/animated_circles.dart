@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class AnimatedCircles extends StatefulWidget {
+  const AnimatedCircles({super.key});
+
   @override
   _AnimatedCirclesState createState() => _AnimatedCirclesState();
 }

@@ -9,6 +9,7 @@ class StarFallingBackground extends StatefulWidget {
   final double maxStarSize;
   final Duration animationDuration;
   final Color backgroundColor;
+  final Widget? child; // Added child parameter
 
   const StarFallingBackground({
     Key? key,
@@ -18,6 +19,7 @@ class StarFallingBackground extends StatefulWidget {
     this.maxStarSize = 4.0,
     this.animationDuration = const Duration(seconds: 10),
     this.backgroundColor = Colors.black,
+    this.child, // Added child parameter
   }) : super(key: key);
 
   @override
@@ -38,7 +40,7 @@ class _StarFallingBackgroundState extends State<StarFallingBackground>
   void _initializeStars() {
     stars = List.generate(
       widget.numberOfStars,
-      (index) => StarData(
+          (index) => StarData(
         controller: AnimationController(
           vsync: this,
           duration: Duration(
@@ -74,22 +76,30 @@ class _StarFallingBackgroundState extends State<StarFallingBackground>
     return Container(
       color: widget.backgroundColor,
       child: Stack(
-        children: stars.map((star) {
-          return AnimatedBuilder(
-            animation: star.controller,
-            builder: (context, child) {
-              return Positioned(
-                left: star.initialPosition.dx,
-                top: star.initialPosition.dy +
-                    MediaQuery.of(context).size.height * star.controller.value,
-                child: Opacity(
-                  opacity: _calculateStarOpacity(star.controller.value),
-                  child: _buildStar(star.size),
-                ),
-              );
-            },
-          );
-        }).toList(),
+        children: [
+          // Stars layer (background)
+          ...stars.map((star) {
+            return AnimatedBuilder(
+              animation: star.controller,
+              builder: (context, child) {
+                return Positioned(
+                  left: star.initialPosition.dx,
+                  top: star.initialPosition.dy +
+                      MediaQuery.of(context).size.height * star.controller.value,
+                  child: Opacity(
+                    opacity: _calculateStarOpacity(star.controller.value),
+                    child: _buildStar(star.size),
+                  ),
+                );
+              },
+            );
+          }).toList(),
+          // Child widget layer (foreground)
+          if (widget.child != null)
+            Positioned.fill(
+              child: widget.child!,
+            ),
+        ],
       ),
     );
   }
