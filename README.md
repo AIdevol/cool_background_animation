@@ -1,5 +1,7 @@
 # 🌈 Cool Background Animation 🌌
 
+![Cool Background Animation Demo](https://raw.githubusercontent.com/AIdevol/cool_background_animation/main/example/assets/Untitleddesign-ezgif.com-video-to-gif-converter.gif)
+
 **Cool Background Animation** is a Flutter package designed to add stunning, customizable animated background effects to your apps. Perfect for enhancing visual appeal with minimal effort, this package ensures your projects stand out with eye-catching animations.
 
 ---
@@ -152,6 +154,39 @@ class MyHomePage extends StatelessWidget {
           enableShootingStars: true,
           shootingStarInterval: Duration(seconds: 3),
         ));
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GradientMeshBackground(
+        config: GradientMeshConfig(
+          colors: [
+            Color(0xFF667EEA),
+            Color(0xFF764BA2),
+            Color(0xFFF093FB),
+            Color(0xFF4FACFE),
+          ],
+          animationSpeed: 1.0,
+          enableBlur: true,
+          enablePulsing: true,
+        ),
+        child: Center(
+          child: Text(
+            'Beautiful Gradient Mesh',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 ```
